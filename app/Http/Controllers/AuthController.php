@@ -10,6 +10,7 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Validation\ValidationException;
 use PHPOpenSourceSaver\JWTAuth\Facades\JWTAuth;
 
 class AuthController extends Controller
@@ -66,4 +67,40 @@ class AuthController extends Controller
             'Seller and User created successfully!'
         );
     }
+
+    public function login(Request $request)
+    {
+        $request->validate([
+            'email' => ['required', 'email'],
+            'password' => ['required']
+        ]);
+        $authData = $request->only('email', 'password');
+
+        $token = JWTAuth::attempt($authData);
+        if (!$token) {
+            throw ValidationException::withMessages([
+                'Invalid credentials' => 'Invalid email or password'
+            ]);
+        }
+
+        return $this->successResponse([
+            'token' => $token
+        ]);
+    }
+
+    public function logout()
+    {
+        // get tokenfrom the current request and invalidate it (by blacklisting)
+        JWTAuth::invalidate(JWTAuth::getToken());
+        return $this->successResponse([
+            'data' => 'successfully logged out'
+        ]);
+    }
+
+    public function refresh()
+    {
+        // TODO: Implement
+        // TODO: Config jwt auth to live longer
+    }
+
 }
