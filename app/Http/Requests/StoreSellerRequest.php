@@ -23,7 +23,7 @@ class StoreSellerRequest extends FormRequest
      */
     public function rules(): array
     {
-        return array_merge($this->sellerRules(), $this->userRules(  ));
+        return array_merge($this->sellerRules(), $this->userRules());
     }
 
     public function sellerRules(): array
@@ -31,7 +31,8 @@ class StoreSellerRequest extends FormRequest
         return [
             // regex allows ascii characters (a-z A-Z + white spaces)
             // tried to use alpha:ascii but since it does not allow whitespaces decided to write custom regex
-            'store_name' => ['required', 'unique:App\\Models\\Seller,store_name', 'regex:/^[A-Za-z\s]+$/u'],
+            'store_name' => ['required', 'unique:App\Models\Seller,store_name', 'regex:/^[A-Za-z\s]+$/u'],
+            'role' => ['prohibited'],
         ];
     }
 

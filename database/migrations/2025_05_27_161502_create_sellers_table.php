@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('sellers', function (Blueprint $table) {
             $table->id();
             // this is same as doign foreighUuid('user_id')->constrained(); // user will be users table and id will be id column
-            $table->foreignUuid('user_id')->references('id')->on('users');
+            $table->foreignUuid('user_id')->references('id')->on('users')->onDelete('cascade');
             $table->string('store_name', 255)->unique();
             $table->string('slug')->unique();
             $table->enum('status', ['pending', 'approved', 'rejected'])->default('pending');

@@ -13,7 +13,7 @@ class StoreUserRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return true; // TODO: Fix
+        return true;  // TODO: Fix
     }
 
     /**
@@ -24,12 +24,12 @@ class StoreUserRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'username' => ['required', 'unique:App\\Models\\User,username', 'alpha:ascii'],
+            'username' => ['required', 'unique:App\Models\User,username', 'alpha:ascii'],
             'email' => ['required', 'email'],
             'password' => ['required', 'min:8'],
-            'phone_number' => ['required', 'unique:App\\Models\\User,phone_number'],
+            'phone_number' => ['required', 'unique:App\Models\User,phone_number'],
             // Get all enum values like ['user', 'moderator', 'admin']
-            'role' => ['required', Rule::in(array_column(Role::cases(), 'value'))]
+            'role' => ['prohibited']
         ];
     }
 }

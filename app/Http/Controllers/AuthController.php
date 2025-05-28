@@ -20,7 +20,7 @@ class AuthController extends Controller
         $user = User::create([
             'username' => $request->input('username'),
             'email' => $request->input('email'),
-            'role' => $request->input('role'),
+            'role' => Role::User,  // default user role to user
             'phone_number' => $request->input('phone_number'),
             'password' => $hashedPassword,
         ]);
@@ -35,15 +35,15 @@ class AuthController extends Controller
 
     public function registerSeller(StoreSellerRequest $request)
     {
-        // create user
         $hashedPassword = Hash::make($request->input('password'));
 
         // used transaction because seller needs user_id and if creating the user or the seller fails none of them will be created
         $token = DB::transaction(function () use ($request, $hashedPassword) {
+            // create user
             $user = User::create([
                 'username' => $request->input('username'),
                 'email' => $request->input('email'),
-                'role' => $request->input('role'),
+                'role' => Role::User,  // default user role to user
                 'phone_number' => $request->input('phone_number'),
                 'password' => $hashedPassword,
             ]);
