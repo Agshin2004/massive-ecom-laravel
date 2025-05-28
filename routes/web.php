@@ -1,7 +1,8 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use App\Enums\Role;
 
 Route::get('/', function () {
-    return view('welcome');
+    // return Role::Admin->value;
 });

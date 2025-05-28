@@ -17,7 +17,7 @@ return new class extends Migration
             $table->foreignUuid('user_id')->references('id')->on('users');
             $table->string('store_name', 255)->unique();
             $table->string('slug')->unique();
-            $table->enum('status', ['pending', 'approved', 'rejected']);
+            $table->enum('status', ['pending', 'approved', 'rejected'])->default('pending');
             $table->string('logo_url')->nullable();
             $table->smallInteger('rating')->default(0)->unsigned();
             $table->timestamps();

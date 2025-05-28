@@ -7,8 +7,8 @@ use Illuminate\Support\Str;
 
 class Order extends Model
 {
-    protected $keyType = 'string';
-    protected $incrementing = false;
+    public $keyType = 'string';
+    public $incrementing = false;
 
     public static function booted()
     {
