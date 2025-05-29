@@ -16,7 +16,7 @@ return new class extends Migration
             $table->string('name');
             $table->string('description');
             $table->foreignId('category_id')->references('id')->on('categories'); // same as doinf constrained()
-            $table->integer('price')->unsigned();
+            $table->decimal('price')->unsigned();
             $table->foreignId('seller_id')->references('id')->on('sellers');
             $table->timestamps();
         });

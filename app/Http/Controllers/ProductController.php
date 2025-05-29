@@ -20,7 +20,25 @@ class ProductController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $request->validate([
+            'name' => ['required', 'min:3', 'max:120'],
+            'description' => ['required'],
+            'price' => ['required', 'numeric'],  // must be *.**
+            'category_id' => ['required', 'exists:App\Models\Category,id'],
+            'seller_id' => ['required', 'exists:App\Models\Seller,id']
+        ]);
+
+        sellerHasProduct($request->input('name'), $request->input('price'));
+
+        $product = Product::create([
+            'name' => $request->input('name'),
+            'description' => $request->input('description'),
+            'price' => $request->input('price'),
+            'category_id' => $request->input('category_id'),
+            'seller_id' => $request->input('seller_id')
+        ]);
+
+        return $this->successResponse($product);
     }
 
     /**
