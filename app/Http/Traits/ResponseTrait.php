@@ -20,4 +20,9 @@ trait ResponseTrait
             'code' => $code
         ]);
     }
+
+    protected function noContent()
+    {
+        return response()->noContent();
+    }
 }

@@ -12,7 +12,8 @@ class ProductController extends Controller
      */
     public function index()
     {
-        //
+        $products = Product::all();
+        return $this->successResponse($products);
     }
 
     /**
@@ -46,7 +47,7 @@ class ProductController extends Controller
      */
     public function show(Product $product)
     {
-        return response()->json($product);
+        return $this->successResponse($product);
     }
 
     /**
@@ -54,7 +55,28 @@ class ProductController extends Controller
      */
     public function update(Request $request, Product $product)
     {
-        //
+        if (empty($request->all()))
+            return $this->errorResponse('At least one column needs to be changed');
+
+        $request->validate([
+            'name' => ['min:3', 'max:120'],
+            'price' => ['numeric'],
+            'category_id' => ['exists:App\Models\Category,id'],
+            'seller_id' => ['prohibited']
+        ]);
+        $validated = $request->only([
+            'name',
+            'description',
+            'price',
+            'category_id'
+        ]);
+        // additional checks
+        if (count($validated) !== count($request->all()))
+            abort(400, 'Unexpected fields are in request!');
+
+        $product->update($request->all());
+
+        return $this->successResponse($product);
     }
 
     /**
@@ -62,6 +84,8 @@ class ProductController extends Controller
      */
     public function destroy(Product $product)
     {
-        //
+        $product->delete();
+
+        return $this->noContent();
     }
 }
