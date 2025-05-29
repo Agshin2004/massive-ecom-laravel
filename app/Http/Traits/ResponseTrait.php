@@ -13,7 +13,7 @@ trait ResponseTrait
         ]);
     }
 
-    protected function errorResponse($message = 'failed', $code)
+    protected function errorResponse($message = 'failed', $code = 400)
     {
         return response()->json([
             'message' => $message,
