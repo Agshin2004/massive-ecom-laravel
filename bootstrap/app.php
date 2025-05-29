@@ -1,12 +1,14 @@
 <?php
 
+use Illuminate\Http\Request;
+use Illuminate\Foundation\Application;
+use Illuminate\Validation\ValidationException;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
-use Illuminate\Foundation\Application;
-use Illuminate\Http\Request;
-use Illuminate\Validation\ValidationException;
+use PHPOpenSourceSaver\JWTAuth\Exceptions\JWTException;
 use PHPOpenSourceSaver\JWTAuth\Exceptions\TokenInvalidException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
+use PHPOpenSourceSaver\JWTAuth\Exceptions\TokenBlacklistedException;
 
 return Application::configure(basePath: dirname(__DIR__))
     ->withRouting(
@@ -42,11 +44,18 @@ return Application::configure(basePath: dirname(__DIR__))
                 ], 404);
             }
 
-            if ($e instanceof TokenInvalidException) {
+            if ($e instanceof TokenBlacklistedException) {
                 return response()->json([
                     'success' => false,
-                    'message' => $e->getMessage() ?: 'Invalid Token'
-                ], $e->getCode() ?? 400);
+                    'message' => 'Token has been blacklisted'
+                ], 401);
+            }
+
+            if ($e instanceof TokenInvalidException || $e instanceof JWTException) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Invalid or expired token'
+                ], 401);
             }
 
             // handle unhanled errors

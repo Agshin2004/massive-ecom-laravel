@@ -11,6 +11,8 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\ValidationException;
+use PHPOpenSourceSaver\JWTAuth\Exceptions\TokenBlacklistedException;
+use PHPOpenSourceSaver\JWTAuth\Exceptions\TokenInvalidException;
 use PHPOpenSourceSaver\JWTAuth\Facades\JWTAuth;
 
 class AuthController extends Controller
@@ -93,14 +95,18 @@ class AuthController extends Controller
         // get tokenfrom the current request and invalidate it (by blacklisting)
         JWTAuth::invalidate(JWTAuth::getToken());
         return $this->successResponse([
-            'data' => 'successfully logged out'
+            'message' => 'successfully logged out'
         ]);
     }
 
     public function refresh()
     {
-        // TODO: Implement
-        // TODO: Config jwt auth to live longer
-    }
+        // note: when token is refreshed old token gets blacklisted
 
+        JWTAuth::parseToken();  // parse token and check if it is valid
+        $newToken = JWTAuth::refresh();
+        return $this->successResponse([
+            'token' => $newToken
+        ]);
+    }
 }

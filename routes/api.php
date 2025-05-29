@@ -14,4 +14,5 @@ Route::prefix('auth')->controller(AuthController::class)->group(function () {
     Route::post('register-seller', 'registerSeller');
     Route::post('login', 'login');
     Route::post('logout', 'logout');
+    Route::post('refresh', 'refresh');
 });
