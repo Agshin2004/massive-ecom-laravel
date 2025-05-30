@@ -3,6 +3,7 @@
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\ProductController;
+use App\Http\Controllers\PromoController;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -23,3 +24,4 @@ Route::prefix('auth')->controller(AuthController::class)->group(function () {
 // * Product Related Routes
 Route::apiResource('product', ProductController::class);
 Route::apiResource('category', CategoryController::class);
+Route::apiResource('promo', PromoController::class);
