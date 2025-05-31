@@ -24,10 +24,10 @@ Route::prefix('auth')->controller(AuthController::class)->group(function () {
 
 // TODO: Add auth middleware
 Route::middleware(['auth:api'])->group(function () {
-    Route::apiResource('product', ProductController::class);
-    Route::apiResource('category', CategoryController::class);
-    Route::apiResource('promo', PromoController::class);
-    Route::apiResource('review', ReviewController::class);
+    Route::apiResource('products', ProductController::class);
+    Route::apiResource('categories', CategoryController::class);
+    Route::apiResource('promos', PromoController::class);
+    Route::apiResource('reviews', ReviewController::class);
 
     Route::prefix('users')->group(function () {
         Route::get('{user}/reviews', [ReviewController::class, 'userReviews']);

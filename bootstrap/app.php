@@ -61,8 +61,9 @@ return Application::configure(basePath: dirname(__DIR__))
             if ($e instanceof \Illuminate\Database\QueryException) {
                 return response()->json([
                     'success' => false,
-                    'message' => $e->getMessage() ?: $e->getTrace()
-                ]);
+                    'message' => 'DB Error',
+                    'stack' => config('app.debug') ? ($e->getMessage() ?: $e->getTrace()) : null
+                ], 400);
             }
 
             // handle unhanled errors

@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Resources\ReviewResource;
 use App\Models\Review;
+use App\Models\User;
 use Illuminate\Http\Request;
 
 class ReviewController extends Controller
@@ -14,7 +15,8 @@ class ReviewController extends Controller
     public function userReviews($userId)
     {
         // todo: return as collection
-        $reviews = Review::where('user_id', $userId)->paginate(10);
+        $user = User::find($userId);
+        $reviews = $user->reviews()->paginate(10);
         return $this->successResponse(ReviewResource::collection($reviews));
     }
 

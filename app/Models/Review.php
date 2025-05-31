@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Models\User;
 use Illuminate\Database\Eloquent\Model;
 
 class Review extends Model
@@ -12,4 +13,9 @@ class Review extends Model
         'rating',
         'user_id'
     ];
+
+    public function user()
+    {
+        return $this->belongTo(User::class);
+    }
 }

@@ -3,6 +3,7 @@
 namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
+use App\Models\Review;
 use App\Models\Seller;
 use Illuminate\Support\Str;
 use Illuminate\Notifications\Notifiable;
@@ -77,5 +78,10 @@ class User extends Authenticatable implements JWTSubject
     public function seller()
     {
         return $this->hasOne(Seller::class);
+    }
+
+    public function reviews()
+    {
+        return $this->hasMany(Review::class);
     }
 }
