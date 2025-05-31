@@ -1,14 +1,14 @@
 <?php
 
-use Illuminate\Http\Request;
-use Illuminate\Foundation\Application;
-use Illuminate\Validation\ValidationException;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
+use Illuminate\Foundation\Application;
+use Illuminate\Http\Request;
+use Illuminate\Validation\ValidationException;
 use PHPOpenSourceSaver\JWTAuth\Exceptions\JWTException;
+use PHPOpenSourceSaver\JWTAuth\Exceptions\TokenBlacklistedException;
 use PHPOpenSourceSaver\JWTAuth\Exceptions\TokenInvalidException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
-use PHPOpenSourceSaver\JWTAuth\Exceptions\TokenBlacklistedException;
 
 return Application::configure(basePath: dirname(__DIR__))
     ->withRouting(
@@ -56,6 +56,13 @@ return Application::configure(basePath: dirname(__DIR__))
                     'success' => false,
                     'message' => 'Invalid or expired token'
                 ], 401);
+            }
+
+            if ($e instanceof \Illuminate\Database\QueryException) {
+                return response()->json([
+                    'success' => false,
+                    'message' => $e->getMessage() ?: $e->getTrace()
+                ]);
             }
 
             // handle unhanled errors
