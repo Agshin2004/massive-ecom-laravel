@@ -3,6 +3,7 @@
 namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
+use App\Models\Cart;
 use App\Models\Review;
 use App\Models\Seller;
 use Illuminate\Support\Str;
@@ -23,6 +24,7 @@ class User extends Authenticatable implements JWTSubject
      * @var list<string>
      */
     protected $fillable = [
+        'id',
         'username',
         'email',
         'role',
@@ -44,12 +46,12 @@ class User extends Authenticatable implements JWTSubject
         'remember_token',
     ];
 
-    public static function booted()
-    {
-        static::creating(function ($instance) {
-            $instance->id = Str::uuid();
-        });
-    }
+    // public static function booted()
+    // {
+    //     static::creating(function ($instance) {
+    //         $instance->id = (string) Str::uuid();
+    //     });
+    // }
 
     /**
      * Get the attributes that should be cast.
@@ -83,5 +85,10 @@ class User extends Authenticatable implements JWTSubject
     public function reviews()
     {
         return $this->hasMany(Review::class);
+    }
+
+    public function cart()
+    {
+        return $this->hasOne(Cart::class);
     }
 }
