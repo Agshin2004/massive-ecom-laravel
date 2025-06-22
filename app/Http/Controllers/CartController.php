@@ -3,7 +3,6 @@
 namespace App\Http\Controllers;
 
 use App\Models\CartItem;
-use App\Models\User;
 use Illuminate\Http\Request;
 
 class CartController extends Controller
@@ -14,7 +13,7 @@ class CartController extends Controller
     public function userCartItems()
     {
         $user = auth()->user();
-        $cartItems = $user->cart?->items ?? collect(); // if no items just return empty collection
+        $cartItems = $user->cart?->items ?? collect();  // if no items just return empty collection
 
         return $this->successResponse($cartItems);
     }

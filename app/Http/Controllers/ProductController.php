@@ -4,15 +4,17 @@ namespace App\Http\Controllers;
 
 use App\Models\Product;
 use Illuminate\Http\Request;
+use App\Repositories\ProductRepo;
 
 class ProductController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
+    public function __construct(private ProductRepo $repo)
+    {
+    }
+
     public function index()
     {
-        $products = Product::all();
+        $products = $this->repo->getAll();
         return $this->successResponse($products);
     }
 
@@ -31,13 +33,14 @@ class ProductController extends Controller
 
         sellerHasProduct($request->input('name'), $request->input('price'));
 
-        $product = Product::create([
+        $productData = [
             'name' => $request->input('name'),
             'description' => $request->input('description'),
             'price' => $request->input('price'),
             'category_id' => $request->input('category_id'),
             'seller_id' => $request->input('seller_id')
-        ]);
+        ];
+        $product = $this->repo->create($productData);
 
         return $this->successResponse($product);
     }
@@ -55,8 +58,9 @@ class ProductController extends Controller
      */
     public function update(Request $request, Product $product)
     {
-        if (empty($request->all()))
+        if (empty($request->all())) {
             return $this->errorResponse('At least one column needs to be changed');
+        }
 
         $request->validate([
             'name' => ['min:3', 'max:120'],
@@ -64,16 +68,20 @@ class ProductController extends Controller
             'category_id' => ['exists:App\Models\Category,id'],
             'seller_id' => ['prohibited']
         ]);
+
         $validated = $request->only([
             'name',
             'description',
             'price',
             'category_id'
         ]);
-        // additional checks
-        if (count($validated) !== count($request->all()))
-            abort(400, 'Unexpected fields are in request!');
 
+        // checking some additional fields were passed
+        if (count($validated) !== count($request->all())) {
+            abort(400, 'Unexpected fields are in request!');
+        }
+
+        // didn't use repo since it is already looked up by laravel
         $product->update($request->all());
 
         return $this->successResponse($product);
