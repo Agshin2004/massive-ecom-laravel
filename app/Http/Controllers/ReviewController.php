@@ -12,12 +12,29 @@ class ReviewController extends Controller
     /**
      * Reviews by the user
      */
-    public function userReviews($userId)
+    public function userReviews(Request $request, $userId)
     {
-        // todo: return as collection
         $user = User::find($userId);
+        if (! $user) {
+            return $this->errorResponse('User not found');
+        }
         $reviews = $user->reviews()->paginate(10);
-        return $this->successResponse(ReviewResource::collection($reviews));
+        return $this->successResponse([
+            'reviews' => ReviewResource::collection($reviews)
+        ]);
+    }
+
+    public function userReviewById($userId, $reviewId)
+    {
+        $user = User::find($userId);
+        if (! $user) {
+            return $this->errorResponse('User not found');
+        }
+
+        $review = $user->reviews()->where('id', $reviewId)->get();
+        return $this->successResponse([
+            'review' => $review,
+        ]);
     }
 
     /**

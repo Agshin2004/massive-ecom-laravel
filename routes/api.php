@@ -32,7 +32,8 @@ Route::middleware(['auth:api'])->group(function () {
     Route::apiResource('cart-items', CartController::class);
 
     Route::prefix('users')->group(function () {
-        Route::get('{user}/reviews', [ReviewController::class, 'userReviews']);
+        Route::get('{userId}/reviews', [ReviewController::class, 'userReviews']);
+        Route::get('{userId}/reviews/{reviewId}', [ReviewController::class, 'userReviewById']);
         Route::get('{user}/cart-items', [CartController::class, 'userCartItems']);
     });
 });

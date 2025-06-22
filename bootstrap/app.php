@@ -39,7 +39,7 @@ return Application::configure(basePath: dirname(__DIR__))
                 // error handle for handling 404
                 return response()->json([
                     'success' => false,
-                    'message' => 'Not FOund',
+                    'message' => 'Not Found',
                     'stack' => config('app.debug') ? $e->getTrace() : null
                 ], 404);
             }
