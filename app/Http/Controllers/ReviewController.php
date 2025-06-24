@@ -9,32 +9,9 @@ use Illuminate\Http\Request;
 
 class ReviewController extends Controller
 {
-    /**
-     * Reviews by the user
-     */
-    public function userReviews(Request $request, $userId)
+    public function index(Request $request)
     {
-        $user = User::find($userId);
-        if (! $user) {
-            return $this->errorResponse('User not found');
-        }
-        $reviews = $user->reviews()->paginate(10);
-        return $this->successResponse([
-            'reviews' => ReviewResource::collection($reviews)
-        ]);
-    }
-
-    public function userReviewById($userId, $reviewId)
-    {
-        $user = User::find($userId);
-        if (! $user) {
-            return $this->errorResponse('User not found');
-        }
-
-        $review = $user->reviews()->where('id', $reviewId)->get();
-        return $this->successResponse([
-            'review' => $review,
-        ]);
+        return $this->errorResponse('Url Not Found', 404);
     }
 
     /**

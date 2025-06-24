@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\UserController;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -32,8 +33,8 @@ Route::middleware(['auth:api'])->group(function () {
     Route::apiResource('cart-items', CartController::class);
 
     Route::prefix('users')->group(function () {
-        Route::get('{userId}/reviews', [ReviewController::class, 'userReviews']);
-        Route::get('{userId}/reviews/{reviewId}', [ReviewController::class, 'userReviewById']);
-        Route::get('{user}/cart-items', [CartController::class, 'userCartItems']);
+        Route::get('reviews', [UserController::class, 'userReviews']);
+        Route::get('reviews/{reviewId}', [UserController::class, 'userReviewById']);
+        Route::get('cart-items', [UserController::class, 'userCartItems']);
     });
 });

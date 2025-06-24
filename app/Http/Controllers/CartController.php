@@ -4,18 +4,13 @@ namespace App\Http\Controllers;
 
 use App\Models\CartItem;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class CartController extends Controller
 {
-    /**
-     * Get all items that are in user's cart
-     */
-    public function userCartItems()
+    public function index(Request $request)
     {
-        $user = auth()->user();
-        $cartItems = $user->cart?->items ?? collect();  // if no items just return empty collection
-
-        return $this->successResponse($cartItems);
+        return $this->errorResponse('Url Not Found', 404);
     }
 
     /**
@@ -28,7 +23,7 @@ class CartController extends Controller
             'quantity' => ['required', 'numeric', 'min:1'],
         ]);
 
-        $user = auth()->user();
+        $user = Auth::user();
         $cartId = $user->cart->id;  // since it is 1:1 relationship accessing cart as property
 
         $cartItem = CartItem::where('cart_id', $cartId)
@@ -56,7 +51,9 @@ class CartController extends Controller
      */
     public function show(CartItem $cartItem)
     {
-        return $this->successResponse($cartItem);
+        return $this->successResponse([
+            'cart_items' => $cartItem
+        ]);
     }
 
     /**

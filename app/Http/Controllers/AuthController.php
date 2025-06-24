@@ -72,16 +72,25 @@ class AuthController extends Controller
 
     public function login(Request $request)
     {
-        $request->validate([
-            'email' => ['required', 'email'],
+        $creds = $request->validate([
+            'email' => ['email'],
+            'username' => ['alpha:ascii'],
             'password' => ['required']
         ]);
-        $authData = $request->only('email', 'password');
+        if (!isset($creds['email']) && !isset($creds['username'])) {
+            throw new \Exception('Username or Email missing.');
+        }
+
+        $authData = $request->only(
+            array_key_exists('email', $creds) ? 'email' : 'username',
+            'password'
+        );
+
 
         $token = JWTAuth::attempt($authData);
         if (!$token) {
             throw ValidationException::withMessages([
-                'Invalid credentials' => 'Invalid email or password'
+                'invalid_credentials' => 'Invalid email or password'
             ]);
         }
 
