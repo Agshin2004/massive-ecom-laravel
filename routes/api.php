@@ -1,8 +1,7 @@
 <?php
 
 use App\Http\Controllers\UserController;
-use App\Models\User;
-use Illuminate\Http\Request;
+use App\Http\Middleware\NotLoggedIn;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CartController;
@@ -16,13 +15,16 @@ use App\Http\Controllers\CategoryController;
 // })->middleware('auth:sanctum');
 
 // * Auth Related Routes
-Route::prefix('auth')->controller(AuthController::class)->group(function () {
-    Route::post('register-user', 'registerUser');
-    Route::post('register-seller', 'registerSeller');
-    Route::post('login', 'login');
-    Route::post('logout', 'logout');
-    Route::post('refresh', 'refresh');
-});
+Route::prefix('auth')
+    ->middleware(NotLoggedIn::class)
+    ->controller(AuthController::class)
+    ->group(function () {
+        Route::post('register-user', 'registerUser');
+        Route::post('register-seller', 'registerSeller');
+        Route::post('login', 'login');
+        Route::post('logout', 'logout');
+        Route::post('refresh', 'refresh');
+    });
 
 // TODO: Add auth middleware
 Route::middleware(['auth:api'])->group(function () {

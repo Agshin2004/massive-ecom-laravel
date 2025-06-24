@@ -3,6 +3,7 @@
 namespace App\Http\Requests;
 
 use App\Enums\Role;
+use Exception;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 
@@ -13,6 +14,11 @@ class StoreUserRequest extends FormRequest
      */
     public function authorize(): bool
     {
+        // $authHeader = $this->header('authorization');
+        // if ($authHeader) {
+        //     throw new \Exception('')
+        // }
+
         return true;  // TODO: Fix
     }
 
