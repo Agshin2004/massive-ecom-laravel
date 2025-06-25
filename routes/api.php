@@ -16,7 +16,7 @@ use App\Http\Controllers\CategoryController;
 
 // * Auth Related Routes
 Route::prefix('auth')
-    ->middleware(NotLoggedIn::class)
+    ->middleware([NotLoggedIn::class, 'throttle:api'])
     ->controller(AuthController::class)
     ->group(function () {
         Route::post('register-user', 'registerUser');
@@ -27,7 +27,7 @@ Route::prefix('auth')
     });
 
 // TODO: Add auth middleware
-Route::middleware(['auth:api'])->group(function () {
+Route::middleware(['auth:api', 'throttle:api'])->group(function () {
     Route::apiResource('products', ProductController::class);
     Route::apiResource('categories', CategoryController::class);
     Route::apiResource('promos', PromoController::class);

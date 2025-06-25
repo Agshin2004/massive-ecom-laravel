@@ -31,12 +31,15 @@ class PromoController extends Controller
             'per_usage_limit',
         ]);
 
-        if (count($request->all()) !== count($allowedFields))
+        if (count($request->all()) !== count($allowedFields)) {
             abort(400, 'Unexpected fields');
+        }
 
         $promo = Promo::create($request->all());
 
-        return $this->successResponse($promo);
+        return $this->successResponse([
+            'promo' => $promo
+        ]);
     }
 
     /**
@@ -44,7 +47,9 @@ class PromoController extends Controller
      */
     public function show(Promo $promo)
     {
-        return $this->successResponse($promo);
+        return $this->successResponse([
+            'promo' => $promo
+        ]);
     }
 
     /**
@@ -52,12 +57,15 @@ class PromoController extends Controller
      */
     public function update(Request $request, Promo $promo)
     {
-        if (empty($request->all()))
+        if (empty($request->all())) {
             abort(400, 'At least on field must be present');
-        
+        }
+
         // Note: not checking if is_active present since later I will implemented only admins update/create promos
         $promo->update($request->all());
-        return $this->successResponse($promo);
+        return $this->successResponse([
+            'promo' => $promo
+        ]);
     }
 
     /**

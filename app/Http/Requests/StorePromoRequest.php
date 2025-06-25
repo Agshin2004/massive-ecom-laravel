@@ -11,7 +11,12 @@ class StorePromoRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return true;  // todo: fix - only admins can create promo codes
+        // using $this->user() instead of $this->user
+        // because FormRequest classes are resolved before the auth middleware runs
+        // so the $this->user property is not populated YET
+        // The user() method runs on FormRequest TO GET user (basically same thing that auth middleware would to)
+        // but we do it manually since auth middleware is no t resolved yet
+        return $this->user()->role === 'admin';
     }
 
     public function withValidator($validator)
