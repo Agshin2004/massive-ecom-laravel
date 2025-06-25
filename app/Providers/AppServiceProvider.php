@@ -3,8 +3,10 @@
 namespace App\Providers;
 
 use App\Models\User;
+use App\Models\Category;
 use Illuminate\Http\Request;
 use App\Observers\UserObserver;
+use App\Policies\CategoryPolicy;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Cache\RateLimiting\Limit;
@@ -46,7 +48,10 @@ class AppServiceProvider extends ServiceProvider
                     // exception handler but if  we returned response() we would need to make some tweaks
                     throw new \Exception('Too many attempts, try again later.', 429);
                 });
-            });
+        });
 
+        // Registering policies; actually could omit this since <MODEL>Policy name convention is usedbut did
+        // it for clarity
+        Gate::policy(Category::class, CategoryPolicy::class);
     }
 }

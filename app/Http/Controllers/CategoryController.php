@@ -3,7 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Models\Category;
+use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Gate;
 
 class CategoryController extends Controller
 {
@@ -27,6 +29,12 @@ class CategoryController extends Controller
         $request->validate([
             'name' => ['required', 'unique:App\Models\Category,name'],
         ]);
+
+        Gate::authorize('create', Category::class);
+
+        // if (Gate::denies('is-admin')) {
+        //     throw new \Exception('Unauthorized', 400);
+        // }
 
         $name = $request->input('name');
         $category = Category::create([
@@ -54,6 +62,9 @@ class CategoryController extends Controller
         $request->validate([
             'name' => ['required', 'unique:App\Models\Category,name'],
         ]);
+
+        Gate::authorize('update', Category::class);
+
         $category->update([
             'name' => $request->input('name'),
         ]);
@@ -65,6 +76,8 @@ class CategoryController extends Controller
      */
     public function destroy(Category $category)
     {
+        Gate::authorize('delete', Category::class);
+
         $category->delete();
 
         return $this->noContent();
