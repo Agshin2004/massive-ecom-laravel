@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Product;
 use Illuminate\Http\Request;
 use App\Repositories\ProductRepo;
+use Illuminate\Support\Facades\Gate;
 
 class ProductController extends Controller
 {
@@ -23,6 +24,8 @@ class ProductController extends Controller
      */
     public function store(Request $request)
     {
+        Gate::authorize('create', Product::class);
+
         $request->validate([
             'name' => ['required', 'min:3', 'max:120'],
             'description' => ['required'],
@@ -30,6 +33,7 @@ class ProductController extends Controller
             'category_id' => ['required', 'exists:App\Models\Category,id'],
             'seller_id' => ['required', 'exists:App\Models\Seller,id']
         ]);
+        
 
         sellerHasProduct($request->input('name'), $request->input('price'));
 
@@ -58,6 +62,9 @@ class ProductController extends Controller
      */
     public function update(Request $request, Product $product)
     {
+        Gate::authorize('update', Product::class);
+
+
         if (empty($request->all())) {
             return $this->errorResponse('At least one column needs to be changed');
         }
@@ -92,8 +99,9 @@ class ProductController extends Controller
      */
     public function destroy(Product $product)
     {
-        $product->delete();
+        Gate::authorize('delete', Product::class);
 
+        $product->delete();
         return $this->noContent();
     }
 }

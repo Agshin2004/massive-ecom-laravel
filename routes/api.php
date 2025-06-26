@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\AdminController;
 use App\Http\Controllers\UserController;
 use App\Http\Middleware\NotLoggedIn;
 use Illuminate\Support\Facades\Route;
@@ -26,7 +27,7 @@ Route::prefix('auth')
         Route::post('refresh', 'refresh');
     });
 
-// TODO: Add auth middleware
+
 Route::middleware(['auth:api', 'throttle:api'])->group(function () {
     Route::apiResource('products', ProductController::class);
     Route::apiResource('categories', CategoryController::class);
@@ -38,5 +39,9 @@ Route::middleware(['auth:api', 'throttle:api'])->group(function () {
         Route::get('reviews', [UserController::class, 'userReviews']);
         Route::get('reviews/{reviewId}', [UserController::class, 'userReviewById']);
         Route::get('cart-items', [UserController::class, 'userCartItems']);
+    });
+
+    Route::prefix('admin')->controller(AdminController::class)->group(function () {
+            Route::post('approve-seller', 'approveSeller');
     });
 });

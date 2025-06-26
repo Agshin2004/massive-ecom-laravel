@@ -11,15 +11,21 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\ValidationException;
-use PHPOpenSourceSaver\JWTAuth\Exceptions\TokenBlacklistedException;
-use PHPOpenSourceSaver\JWTAuth\Exceptions\TokenInvalidException;
 use PHPOpenSourceSaver\JWTAuth\Facades\JWTAuth;
 
 class AuthController extends Controller
 {
     public function registerUser(StoreUserRequest $request)
     {
-        $hashedPassword = Hash::make($request->input('password'));
+        $password = $request->input('password');
+        $passwordConfirm = $request->input('password_confirm');
+        if (!$password || !$passwordConfirm || $password !== $passwordConfirm) {
+            throw ValidationException::withMessages([
+                'invalid_password' => "password and password_confirm do not match or not provided"
+            ]);
+        }
+
+        $hashedPassword = Hash::make($password);
         $user = User::create([
             'username' => $request->input('username'),
             'email' => $request->input('email'),
@@ -41,32 +47,33 @@ class AuthController extends Controller
         $hashedPassword = Hash::make($request->input('password'));
 
         // used transaction because seller needs user_id and if creating the user or the seller fails none of them will be created
-        $token = DB::transaction(function () use ($request, $hashedPassword) {
+        [$token, $seller] = DB::transaction(function () use ($request, $hashedPassword) {
             // create user
             $user = User::create([
                 'username' => $request->input('username'),
                 'email' => $request->input('email'),
-                'role' => Role::User,  // default user role to user
+                'role' => Role::Seller,  // default role to seller
                 'phone_number' => $request->input('phone_number'),
                 'password' => $hashedPassword,
             ]);
 
             // create seller
-            Seller::create([
+            $seller = Seller::create([
                 'user_id' => $user->id,
                 'store_name' => $request->input('store_name'),
                 'slug' => $request->input('slug'),
             ]);
 
             // create and return jwt token
-            return JWTAuth::fromUser($user);
+            return [JWTAuth::fromUser($user), $seller];
         }, attempts: 3);
 
         return $this->successResponse(
             [
+                'seller' => $seller,
                 'token' => $token
             ],
-            'Seller and User created successfully!'
+            'Seller has been created',
         );
     }
 
@@ -77,6 +84,7 @@ class AuthController extends Controller
             'username' => ['alpha:ascii'],
             'password' => ['required']
         ]);
+
         if (!isset($creds['email']) && !isset($creds['username'])) {
             throw new \Exception('Username or Email missing.');
         }
@@ -89,8 +97,9 @@ class AuthController extends Controller
 
         $token = JWTAuth::attempt($authData);
         if (!$token) {
+            $errMsg = array_key_exists('username', $authData) ? "invalid username or password" : "invalid email or password";
             throw ValidationException::withMessages([
-                'invalid_credentials' => 'Invalid email or password'
+                'invalid_credentials' => $errMsg,
             ]);
         }
 

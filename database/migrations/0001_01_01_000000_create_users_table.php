@@ -1,8 +1,9 @@
 <?php
 
-use Illuminate\Database\Migrations\Migration;
-use Illuminate\Database\Schema\Blueprint;
+use App\Enums\Role;
 use Illuminate\Support\Facades\Schema;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Database\Migrations\Migration;
 
 return new class extends Migration {
     /**
@@ -16,7 +17,7 @@ return new class extends Migration {
             $table->string('email')->unique();
             $table->timestamp('email_verified_at')->nullable();
             $table->string('phone_number')->unique();
-            $table->enum('role', ['user', 'moderator', 'admin']);  // seller is a user too
+            $table->enum('role', Role::values()); // insteaad of hardcoding roles like ['user', 'seller', 'admin']; decided to get them from enum
             $table->string('password');
             $table->rememberToken();
             $table->softDeletes();  // adds deleted_at to the table so soft delete will work

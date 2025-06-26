@@ -30,8 +30,8 @@ class StoreUserRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'username' => ['required', 'unique:App\Models\User,username', 'alpha:ascii'],
-            'email' => ['required', 'email'],
+            'username' => ['required', 'alpha:ascii', 'unique:App\Models\User,username'],
+            'email' => ['required', 'email', 'unique:App\Models\User,email'],
             'password' => ['required', 'min:8'],
             'phone_number' => ['required', 'unique:App\Models\User,phone_number'],
             // Get all enum values like ['user', 'moderator', 'admin']

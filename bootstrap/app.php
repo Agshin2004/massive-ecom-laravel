@@ -39,7 +39,7 @@ return Application::configure(basePath: dirname(__DIR__))
                 // error handle for handling 404
                 return response()->json([
                     'success' => false,
-                    'message' => $e->getMessage() ?? 'Not Found',
+                    'message' => config('app.debug') ? $e->getMessage() : 'Not Found',
                     'stack' => config('app.debug') ? $e->getTrace() : null
                 ], 404);
             }
@@ -54,7 +54,7 @@ return Application::configure(basePath: dirname(__DIR__))
             if ($e instanceof TokenInvalidException || $e instanceof JWTException) {
                 return response()->json([
                     'success' => false,
-                    'message' => 'Invalid or expired token'
+                    'message' => "'Invalid or expired token'; {$e->getMessage()}"
                 ], 401);
             }
 

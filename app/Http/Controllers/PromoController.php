@@ -2,9 +2,11 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\StorePromoRequest;
 use App\Models\Promo;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use App\Http\Requests\StorePromoRequest;
+use Illuminate\Validation\ValidationException;
 
 class PromoController extends Controller
 {
@@ -14,7 +16,9 @@ class PromoController extends Controller
     public function index()
     {
         $promos = Promo::all();
-        return $this->successResponse($promos);
+        return $this->successResponse([
+            'promos' => $promos
+        ]);
     }
 
     /**
