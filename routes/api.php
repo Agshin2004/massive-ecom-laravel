@@ -42,6 +42,6 @@ Route::middleware(['auth:api', 'throttle:api'])->group(function () {
     });
 
     Route::prefix('admin')->controller(AdminController::class)->group(function () {
-            Route::post('approve-seller', 'approveSeller');
+            Route::post('seller-status', 'updateSellerStatus');
     });
 });

@@ -9,13 +9,18 @@ use Illuminate\Http\Request;
 
 class AdminController extends Controller
 {
-    public function approveSeller(Request $request)
+    public function updateSellerStatus(Request $request)
     {
         if (!$request->user()->isAdmin()) {
             abort(400, 'Unauthorized');
         }
 
         $userId = $request->input('userId');
+        //* NOTE: could use tryFrom but then we would need to wrap it inside try / catch
+        //* so decided to write static fromValue method on SellerStatus that throws exception if not found
+        $action = SellerStatus::fromValue($request->input('action'))->value;
+
+
         // $user = User::find($userId) ?: abort(404, 'user not found');
         $user = User::findOrFail($userId);
 
@@ -23,13 +28,10 @@ class AdminController extends Controller
             abort(400, 'user is not seller');
         }
 
-        if ($user->role === Role::Seller->value) {
-            abort(400, 'seller already approved');
-        }
-        
-        $user->seller->status = SellerStatus::Approved->value;
+
+        $user->seller->status = $action;
         $user->seller->save(); // saving seller NOT USER
 
-        return $this->successResponse(message: "user \"{$user->username}\" was approved as seller");
+        return $this->successResponse(message: "seller \"{$user->username}\" was {$action}");
     }
 }

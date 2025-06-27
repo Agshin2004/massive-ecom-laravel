@@ -2,9 +2,10 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\Str;
 use App\Models\User;
+use Illuminate\Support\Str;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 
 class Seller extends Model
 {
@@ -16,6 +17,13 @@ class Seller extends Model
         'logo_url',
         'rating'
     ];
+
+    protected function storeName()
+    {
+        return Attribute::make(
+            set: fn (string $value) => ucfirst($value)
+        );
+    }
 
     public static function booted()
     {
