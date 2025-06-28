@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Product;
+use App\Policies\ProductPolicy;
 use Illuminate\Http\Request;
 use App\Repositories\ProductRepo;
 use Illuminate\Support\Facades\Gate;
@@ -13,9 +14,9 @@ class ProductController extends Controller
     {
     }
 
-    public function index()
+    public function index(Request $request)
     {
-        $products = $this->repo->getAll();
+        $products = $this->repo->getAllForUser($request->user());
         return $this->successResponse($products);
     }
 
@@ -33,7 +34,11 @@ class ProductController extends Controller
             'category_id' => ['required', 'exists:App\Models\Category,id'],
             'seller_id' => ['required', 'exists:App\Models\Seller,id']
         ]);
-        
+
+        if (auth()->user()->seller && $request->input('seller_id') != auth()->user()->seller->id) {
+            return $this->errorResponse('You can only create products for your own seller account');
+        }
+
 
         sellerHasProduct($request->input('name'), $request->input('price'));
 
@@ -44,9 +49,10 @@ class ProductController extends Controller
             'category_id' => $request->input('category_id'),
             'seller_id' => $request->input('seller_id')
         ];
-        $product = $this->repo->create($productData);
 
-        return $this->successResponse($product);
+        $product = $this->repo->createForUser($productData, $request->user());
+
+        return $this->successResponse(['product' => $product]);
     }
 
     /**
@@ -62,7 +68,7 @@ class ProductController extends Controller
      */
     public function update(Request $request, Product $product)
     {
-        Gate::authorize('update', Product::class);
+        Gate::authorize('update', $product);
 
 
         if (empty($request->all())) {
@@ -99,7 +105,7 @@ class ProductController extends Controller
      */
     public function destroy(Product $product)
     {
-        Gate::authorize('delete', Product::class);
+        Gate::authorize('delete', $product);
 
         $product->delete();
         return $this->noContent();

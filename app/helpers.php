@@ -10,9 +10,3 @@ function sellerHasProduct($productName, $productPrice)
         abort(400, 'Product with same name and price already exists.');
     }
 }
-
-
-function isAdmin(Model $user): bool
-{
-    return $user->role === 'admin';
-}

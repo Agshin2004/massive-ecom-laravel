@@ -2,32 +2,39 @@
 
 namespace App\Repositories;
 
+use App\Models\User;
 use App\Models\Product;
+use Illuminate\Database\RecordNotFoundException;
 
-class ProductRepo implements IRepository
+class ProductRepo implements IUserOwnedRepository
 {
-    public function getAll(): iterable
+    public function getAllForUser(User $user): iterable
     {
-        return Product::all();
+        return $user->products;
     }
 
-    public function getById(int|string $id): ?object
+    public function findForUser(int|string $id, User $user): ?object
     {
-        return Product::find($id);
+        return Product::where('id', $id)->where('user_id', $user->id)->first();
     }
 
-    public function create(array $data): object
+    public function createForUser(array $data, User $user): object
     {
-        return Product::create($data);
+        // return Product::create($data);
+        return $user->products()->create($data);
     }
 
-    public function update(int|string $id, array $data): bool
+    public function updateForUser(int|string $id, array $data, User $user): bool
     {
-        return Product::find($id)->update($data);
+        $product = Product::where('id', $id)->where('user_id', $user->id)->first();
+
+        return $product ? $product->update($data) : false;
     }
 
-    public function delete(int|string $id): bool
+    public function deleteForUser(int|string $id, User $user): bool
     {
-        return Product::find($id)->delete();
+        $product = Product::where('id', $id)->where('user_id', $user->id)->first();
+
+        return $product ? $product->delete() : false;
     }
 }

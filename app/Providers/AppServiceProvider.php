@@ -3,9 +3,11 @@
 namespace App\Providers;
 
 use App\Models\User;
+use App\Models\Product;
 use App\Models\Category;
 use Illuminate\Http\Request;
 use App\Observers\UserObserver;
+use App\Policies\ProductPolicy;
 use App\Policies\CategoryPolicy;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\ServiceProvider;
@@ -53,5 +55,6 @@ class AppServiceProvider extends ServiceProvider
         // Registering policies; actually could omit this since <MODEL>Policy name convention is usedbut did
         // it for clarity
         Gate::policy(Category::class, CategoryPolicy::class);
+        Gate::policy(Product::class, ProductPolicy::class);
     }
 }

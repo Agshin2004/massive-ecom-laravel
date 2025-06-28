@@ -12,8 +12,9 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('orders', function (Blueprint $table) {
-            $table->uuid()->primary();
-            $table->foreignId('user_id')->references('id')->on('users');
+            $table->uuid('id')->primary();
+            // if user has active orders, then hell not be able to delete his account
+            $table->foreignId('user_id')->references('id')->on('users')->onDelete('restrict');
             $table->timestamps();
         });
     }

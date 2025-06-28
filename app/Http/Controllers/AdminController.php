@@ -18,8 +18,7 @@ class AdminController extends Controller
         $userId = $request->input('userId');
         //* NOTE: could use tryFrom but then we would need to wrap it inside try / catch
         //* so decided to write static fromValue method on SellerStatus that throws exception if not found
-        $action = SellerStatus::fromValue($request->input('action'))->value;
-
+        $status = SellerStatus::fromValue($request->input('status'))->value;
 
         // $user = User::find($userId) ?: abort(404, 'user not found');
         $user = User::findOrFail($userId);
@@ -29,9 +28,9 @@ class AdminController extends Controller
         }
 
 
-        $user->seller->status = $action;
+        $user->seller->status = $status;
         $user->seller->save(); // saving seller NOT USER
 
-        return $this->successResponse(message: "seller \"{$user->username}\" was {$action}");
+        return $this->successResponse(message: "seller \"{$user->username}\" was {$status}");
     }
 }

@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AdminController;
+use App\Http\Controllers\OrderController;
 use App\Http\Controllers\UserController;
 use App\Http\Middleware\NotLoggedIn;
 use Illuminate\Support\Facades\Route;
@@ -34,6 +35,11 @@ Route::middleware(['auth:api', 'throttle:api'])->group(function () {
     Route::apiResource('promos', PromoController::class);
     Route::apiResource('reviews', ReviewController::class);
     Route::apiResource('cart-items', CartController::class);
+    Route::apiResource('orders', OrderController::class);
+
+    Route::prefix('order')->group(function () {
+        Route::post('place-order', [OrderController::class, 'placeOrder']);
+    });
 
     Route::prefix('users')->group(function () {
         Route::get('reviews', [UserController::class, 'userReviews']);
@@ -42,6 +48,6 @@ Route::middleware(['auth:api', 'throttle:api'])->group(function () {
     });
 
     Route::prefix('admin')->controller(AdminController::class)->group(function () {
-            Route::post('seller-status', 'updateSellerStatus');
+        Route::post('seller-status', 'updateSellerStatus');
     });
 });

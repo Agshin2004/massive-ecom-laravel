@@ -3,6 +3,8 @@
 namespace App\Models;
 
 use App\Models\User;
+use App\Models\Product;
+use App\Enums\SellerStatus;
 use Illuminate\Support\Str;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Casts\Attribute;
@@ -17,6 +19,11 @@ class Seller extends Model
         'logo_url',
         'rating'
     ];
+
+    public function isApproved()
+    {
+        return $this->status === SellerStatus::Approved->value;
+    }
 
     protected function storeName()
     {
@@ -35,5 +42,10 @@ class Seller extends Model
     public function user()
     {
         return $this->belongsTo(User::class);
+    }
+
+    public function products()
+    {
+        return $this->hasMany(Product::class);
     }
 }

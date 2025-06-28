@@ -15,9 +15,9 @@ return new class extends Migration
             $table->id();
             $table->string('name');
             $table->string('description');
-            $table->foreignId('category_id')->references('id')->on('categories'); // same as doinf constrained()
+            $table->foreignId('category_id')->references('id')->on('categories')->onDelete('set null'); // same as doinf constrained()
             $table->decimal('price')->unsigned();
-            $table->foreignId('seller_id')->references('id')->on('sellers');
+            $table->foreignId('seller_id')->references('id')->on('sellers')->onDelete('cascade');
             $table->timestamps();
         });
     }

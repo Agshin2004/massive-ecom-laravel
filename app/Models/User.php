@@ -4,9 +4,9 @@ namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 use App\Models\Cart;
+use App\Models\Order;
 use App\Models\Review;
 use App\Models\Seller;
-use Illuminate\Support\Str;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use PHPOpenSourceSaver\JWTAuth\Contracts\JWTSubject;
@@ -90,6 +90,11 @@ class User extends Authenticatable implements JWTSubject
     public function cart()
     {
         return $this->hasOne(Cart::class);
+    }
+
+    public function order()
+    {
+        return $this->hasMany(Order::class);
     }
 
     public function isAdmin(): bool
