@@ -28,7 +28,7 @@ class Seller extends Model
     protected function storeName()
     {
         return Attribute::make(
-            set: fn (string $value) => ucfirst($value)
+            set: fn(string $value) => ucfirst($value)
         );
     }
 

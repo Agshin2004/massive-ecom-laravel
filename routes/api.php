@@ -1,16 +1,16 @@
 <?php
 
 use App\Http\Controllers\AdminController;
+use App\Http\Controllers\AuthController;
+use App\Http\Controllers\CartController;
+use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\OrderController;
+use App\Http\Controllers\ProductController;
+use App\Http\Controllers\PromoController;
+use App\Http\Controllers\ReviewController;
 use App\Http\Controllers\UserController;
 use App\Http\Middleware\NotLoggedIn;
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\AuthController;
-use App\Http\Controllers\CartController;
-use App\Http\Controllers\PromoController;
-use App\Http\Controllers\ReviewController;
-use App\Http\Controllers\ProductController;
-use App\Http\Controllers\CategoryController;
 
 // Route::get('/user', function (Request $request) {
 //     return $request->user();
@@ -28,7 +28,6 @@ Route::prefix('auth')
         Route::post('refresh', 'refresh');
     });
 
-
 Route::middleware(['auth:api', 'throttle:api'])->group(function () {
     Route::apiResource('products', ProductController::class);
     Route::apiResource('categories', CategoryController::class);
@@ -37,9 +36,9 @@ Route::middleware(['auth:api', 'throttle:api'])->group(function () {
     Route::apiResource('cart-items', CartController::class);
     Route::apiResource('orders', OrderController::class);
 
-    Route::prefix('order')->group(function () {
-        Route::post('place-order', [OrderController::class, 'placeOrder']);
-    });
+    // Route::prefix('order')->group(function () {
+    //     Route::post('place-order', [OrderController::class, 'placeOrder']);
+    // });
 
     Route::prefix('users')->group(function () {
         Route::get('reviews', [UserController::class, 'userReviews']);

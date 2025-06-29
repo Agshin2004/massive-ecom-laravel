@@ -3,15 +3,16 @@
 namespace App\Repositories;
 
 use App\Models\User;
+use Illuminate\Database\Eloquent\Model;
 
 
 interface IUserOwnedRepository
 {
     public function getAllForUser(User $user): iterable;
 
-    public function findForUser(int|string $id, User $user): ?object;
+    public function findForUser(int|string $id, User $user): ?Model;
 
-    public function createForUser(array $data, User $user): object;
+    public function createForUser(array $data, User $user): Model;
 
     public function updateForUser(int|string $id, array $data, User $user): bool;
 

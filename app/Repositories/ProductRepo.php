@@ -4,7 +4,6 @@ namespace App\Repositories;
 
 use App\Models\User;
 use App\Models\Product;
-use Illuminate\Database\RecordNotFoundException;
 
 class ProductRepo implements IUserOwnedRepository
 {
@@ -13,15 +12,19 @@ class ProductRepo implements IUserOwnedRepository
         return $user->products;
     }
 
-    public function findForUser(int|string $id, User $user): ?object
+    public function findForUser(int|string $id, User $user): ?Product
     {
         return Product::where('id', $id)->where('user_id', $user->id)->first();
     }
 
-    public function createForUser(array $data, User $user): object
+    public function createForUser(array $data, User $user): Product
     {
-        // return Product::create($data);
-        return $user->products()->create($data);
+        // if ($user->isAdmin()) {
+        //     return Product::create($data);
+        // }
+        // return $user->seller->products()->create($data);
+
+        return Product::create($data);
     }
 
     public function updateForUser(int|string $id, array $data, User $user): bool

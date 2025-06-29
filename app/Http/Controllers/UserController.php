@@ -16,7 +16,7 @@ class UserController extends Controller
     {
         $userId = Auth::id();
         $user = User::find($userId);
-        if (! $user) {
+        if (!$user) {
             return $this->errorResponse('User not found');
         }
         $reviews = $user->reviews()->paginate(10);
@@ -29,7 +29,7 @@ class UserController extends Controller
     {
         $userId = Auth::id();
         $user = User::find($userId);
-        if (! $user) {
+        if (!$user) {
             return $this->errorResponse('User not found');
         }
 
