@@ -9,7 +9,7 @@ trait ResponseTrait
         return response()->json([
             'message' => $message,
             'code' => $code,
-            'payload' => $data
+            'payload' => $data,
         ]);
     }
 
@@ -17,7 +17,7 @@ trait ResponseTrait
     {
         return response()->json([
             'message' => $message,
-            'code' => $code
+            'code' => $code,
         ]);
     }
 

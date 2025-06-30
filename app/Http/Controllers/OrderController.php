@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Enums\OrderStatus;
+use App\Exceptions\NotImplementedException;
 use App\Http\Resources\OrderResource;
 use App\Models\Order;
 use App\Repositories\OrderRepo;
@@ -38,10 +40,20 @@ class OrderController extends Controller
     public function update(Request $request, Order $order)
     {
         // what is update order tho? TODO: think of anything
+        throw new NotImplementedException('UPDATE FOR ORDERS NOT IMPLEMENTED');
     }
 
-    public function destroy(Request $request, Order $order)
+    public function destroy(Order $order)
     {
         // cancelling order
+        $order->is_active = false;
+        $order->order_status = OrderStatus::CANCELED_BY_USER->value;
+        // decided not to delete orderItems, it can be deleted if needed tho
+        // thing is that if the clients wants to list all non active or cancelled
+        // orders, client app can list it, if it was deleted, there wouldn't be that feat
+        // $order->orderItems()->delete();
+        $order->save();
+
+        return $this->noContent();
     }
 }
