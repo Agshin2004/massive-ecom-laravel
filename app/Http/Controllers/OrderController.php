@@ -35,11 +35,13 @@ class OrderController extends Controller
         ]);
     }
 
-    public function update()
+    public function update(Request $request, Order $order)
     {
+        // what is update order tho? TODO: think of anything
     }
 
-    public function destroy()
+    public function destroy(Request $request, Order $order)
     {
+        // cancelling order
     }
 }
