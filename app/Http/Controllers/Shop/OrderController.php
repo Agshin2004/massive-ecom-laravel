@@ -2,19 +2,27 @@
 
 namespace App\Http\Controllers\Shop;
 
-use App\Enums\OrderStatus;
-use App\Exceptions\NotImplementedException;
-use App\Http\Controllers\Controller;
-use App\Http\Resources\OrderResource;
 use App\Models\Order;
-use App\Repositories\OrderRepo;
+use App\Enums\OrderStatus;
 use Illuminate\Http\Request;
+use App\Repositories\OrderRepo;
+use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Gate;
+use App\Http\Resources\OrderResource;
+use App\Exceptions\NotImplementedException;
 
 class OrderController extends Controller
 {
     public function __construct(private OrderRepo $repo) {}
 
-    public function index() {}
+    public function index()
+    {
+        Gate::authorize('viewAny', Order::class);
+
+        $orders = Order::all();
+
+        return $this->successResponse(['orders' => $orders]);
+    }
 
     public function store(Request $request)
     {
@@ -28,6 +36,8 @@ class OrderController extends Controller
 
     public function show(Order $order)
     {
+        Gate::authorize('view', $order);
+
         return $this->successResponse([
             // eager loading relationship befora so we can use whenLoaded on resource and safely fetch
             'order' => new OrderResource($order->load('orderItems.product')),
