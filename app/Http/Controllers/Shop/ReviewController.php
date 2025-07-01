@@ -1,11 +1,12 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Shop;
 
+use App\Http\Controllers\Controller;
 use App\Http\Resources\ReviewResource;
 use App\Models\Review;
-use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class ReviewController extends Controller
 {
@@ -22,14 +23,22 @@ class ReviewController extends Controller
         $request->validate([
             'body' => ['min:3'],  // making not required since review can only be rating
             'product_id' => ['required', 'numeric', 'exists:App\Models\Product,id'],
-            'rating' => ['required', 'numeric', 'min:1', 'max:5']
+            'rating' => ['required', 'numeric', 'min:1', 'max:5'],
         ]);
+
+        $wasRevieweByUser = Review::where('user_id', Auth::id())
+            ->where('product_id', $request->input('product_id'))
+            ->exists();
+
+        if ($wasRevieweByUser) {
+            throw new \Exception('You already left review for this product.');
+        }
 
         $review = Review::create([
             'body' => $request->input('body'),  // will default to null if body not present
             'product_id' => $request->input('product_id'),
             'rating' => $request->input('rating'),
-            'user_id' => auth()->id()
+            'user_id' => auth()->id(),
         ]);
 
         return $this->successResponse(new ReviewResource($review));
@@ -52,10 +61,11 @@ class ReviewController extends Controller
             'body' => ['min:3'],  // making not required since review can only be rating
             'product_id' => ['numeric', 'exists:App\Models\Product,id'],
             'rating' => ['numeric', 'min:1', 'max:5'],
-            'user_id' => ['prohibited']
+            'user_id' => ['prohibited'],
         ]);
 
         $review->update($request->all());
+
         return $this->successResponse(new ReviewResource($review));
     }
 
@@ -65,6 +75,7 @@ class ReviewController extends Controller
     public function destroy(Review $review)
     {
         $review->delete();
+
         return $this->noContent();
     }
 }

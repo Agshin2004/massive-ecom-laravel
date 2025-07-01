@@ -1,22 +1,21 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Shop;
 
+use App\Http\Controllers\Controller;
 use App\Models\Product;
-use App\Policies\ProductPolicy;
-use Illuminate\Http\Request;
 use App\Repositories\ProductRepo;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Gate;
 
 class ProductController extends Controller
 {
-    public function __construct(private ProductRepo $repo)
-    {
-    }
+    public function __construct(private ProductRepo $repo) {}
 
     public function index(Request $request)
     {
         $products = $this->repo->getAllForUser($request->user());
+
         return $this->successResponse($products);
     }
 
@@ -32,13 +31,12 @@ class ProductController extends Controller
             'description' => ['required'],
             'price' => ['required', 'numeric'],  // must be *.**
             'category_id' => ['required', 'exists:App\Models\Category,id'],
-            'seller_id' => ['required', 'exists:App\Models\Seller,id']
+            'seller_id' => ['required', 'exists:App\Models\Seller,id'],
         ]);
 
         if (auth()->user()->seller && $request->input('seller_id') != auth()->user()->seller->id) {
             return $this->errorResponse('You can only create products for your own seller account');
         }
-
 
         sellerHasProduct($request->input('name'), $request->input('price'));
 
@@ -47,7 +45,7 @@ class ProductController extends Controller
             'description' => $request->input('description'),
             'price' => $request->input('price'),
             'category_id' => $request->input('category_id'),
-            'seller_id' => $request->input('seller_id')
+            'seller_id' => $request->input('seller_id'),
         ];
 
         $product = $this->repo->createForUser($productData, $request->user());
@@ -70,7 +68,6 @@ class ProductController extends Controller
     {
         Gate::authorize('update', $product);
 
-
         if (empty($request->all())) {
             return $this->errorResponse('At least one column needs to be changed');
         }
@@ -79,14 +76,14 @@ class ProductController extends Controller
             'name' => ['min:3', 'max:120'],
             'price' => ['numeric'],
             'category_id' => ['exists:App\Models\Category,id'],
-            'seller_id' => ['prohibited']
+            'seller_id' => ['prohibited'],
         ]);
 
         $validated = $request->only([
             'name',
             'description',
             'price',
-            'category_id'
+            'category_id',
         ]);
 
         // checking some additional fields were passed
@@ -108,6 +105,7 @@ class ProductController extends Controller
         Gate::authorize('delete', $product);
 
         $product->delete();
+
         return $this->noContent();
     }
 }

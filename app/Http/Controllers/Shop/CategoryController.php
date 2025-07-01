@@ -1,9 +1,9 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Shop;
 
+use App\Http\Controllers\Controller;
 use App\Models\Category;
-use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Gate;
 
@@ -38,11 +38,11 @@ class CategoryController extends Controller
 
         $name = $request->input('name');
         $category = Category::create([
-            'name' => $name
+            'name' => $name,
         ]);
 
         return $this->successResponse([
-            'category' => $category
+            'category' => $category,
         ]);
     }
 
@@ -68,6 +68,7 @@ class CategoryController extends Controller
         $category->update([
             'name' => $request->input('name'),
         ]);
+
         return $this->successResponse($category);
     }
 

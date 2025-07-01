@@ -1,9 +1,10 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Shop;
 
 use App\Enums\OrderStatus;
 use App\Exceptions\NotImplementedException;
+use App\Http\Controllers\Controller;
 use App\Http\Resources\OrderResource;
 use App\Models\Order;
 use App\Repositories\OrderRepo;
@@ -11,13 +12,9 @@ use Illuminate\Http\Request;
 
 class OrderController extends Controller
 {
-    public function __construct(private OrderRepo $repo)
-    {
-    }
+    public function __construct(private OrderRepo $repo) {}
 
-    public function index()
-    {
-    }
+    public function index() {}
 
     public function store(Request $request)
     {

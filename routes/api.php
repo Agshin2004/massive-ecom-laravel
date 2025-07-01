@@ -1,16 +1,16 @@
 <?php
 
-use App\Http\Controllers\AdminController;
-use App\Http\Controllers\AuthController;
-use App\Http\Controllers\CartController;
-use App\Http\Controllers\CategoryController;
-use App\Http\Controllers\OrderController;
-use App\Http\Controllers\ProductController;
-use App\Http\Controllers\PromoController;
-use App\Http\Controllers\ReviewController;
-use App\Http\Controllers\UserController;
-use App\Http\Middleware\NotLoggedIn;
 use Illuminate\Support\Facades\Route;
+use App\Http\Middleware\Auth\NotLoggedIn;
+use App\Http\Controllers\Auth\AuthController;
+use App\Http\Controllers\Shop\CartController;
+use App\Http\Controllers\User\UserController;
+use App\Http\Controllers\Shop\OrderController;
+use App\Http\Controllers\Shop\PromoController;
+use App\Http\Controllers\Admin\AdminController;
+use App\Http\Controllers\Shop\ReviewController;
+use App\Http\Controllers\Shop\ProductController;
+use App\Http\Controllers\Shop\CategoryController;
 
 // Route::get('/user', function (Request $request) {
 //     return $request->user();

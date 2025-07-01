@@ -1,16 +1,17 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\User;
 
 use App\Models\User;
-use Auth;
 use Illuminate\Http\Request;
+use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Auth;
 use App\Http\Resources\ReviewResource;
 
 class UserController extends Controller
 {
     /**
-     * Reviews by the user
+     * Reviews by the user.
      */
     public function userReviews(Request $request)
     {
@@ -20,8 +21,9 @@ class UserController extends Controller
             return $this->errorResponse('User not found');
         }
         $reviews = $user->reviews()->paginate(10);
+
         return $this->successResponse([
-            'reviews' => ReviewResource::collection($reviews)
+            'reviews' => ReviewResource::collection($reviews),
         ]);
     }
 
@@ -34,13 +36,14 @@ class UserController extends Controller
         }
 
         $review = $user->reviews()->where('id', $reviewId)->get();
+
         return $this->successResponse([
             'review' => $review,
         ]);
     }
 
     /**
-     * Get all items that are in user's cart
+     * Get all items that are in user's cart.
      */
     public function userCartItems()
     {
@@ -49,8 +52,7 @@ class UserController extends Controller
         $cartItems = $user->cart?->items ?? collect();  // if no items just returning empty collection
 
         return $this->successResponse([
-            'cart_items' => $cartItems
+            'cart_items' => $cartItems,
         ]);
     }
-
 }

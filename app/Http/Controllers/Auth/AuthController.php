@@ -1,15 +1,16 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Auth;
 
 use App\Enums\Role;
-use App\Http\Requests\StoreSellerRequest;
-use App\Http\Requests\StoreUserRequest;
-use App\Models\Seller;
 use App\Models\User;
+use App\Models\Seller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Hash;
+use App\Http\Requests\StoreUserRequest;
+use App\Http\Requests\StoreSellerRequest;
 use Illuminate\Validation\ValidationException;
 use PHPOpenSourceSaver\JWTAuth\Facades\JWTAuth;
 
@@ -20,9 +21,7 @@ class AuthController extends Controller
         $password = $request->input('password');
         $passwordConfirm = $request->input('password_confirm');
         if (!$password || !$passwordConfirm || $password !== $passwordConfirm) {
-            throw ValidationException::withMessages([
-                'invalid_password' => "password and password_confirm do not match or not provided"
-            ]);
+            throw ValidationException::withMessages(['invalid_password' => 'password and password_confirm do not match or not provided']);
         }
 
         $hashedPassword = Hash::make($password);
@@ -38,7 +37,7 @@ class AuthController extends Controller
 
         return $this->successResponse([
             'user' => $user,
-            'jwt' => $token
+            'jwt' => $token,
         ]);
     }
 
@@ -71,7 +70,7 @@ class AuthController extends Controller
         return $this->successResponse(
             [
                 'seller' => $seller,
-                'token' => $token
+                'token' => $token,
             ],
             'Seller has been created',
         );
@@ -82,7 +81,7 @@ class AuthController extends Controller
         $creds = $request->validate([
             'email' => ['email'],
             'username' => ['alpha:ascii'],
-            'password' => ['required']
+            'password' => ['required'],
         ]);
 
         if (!isset($creds['email']) && !isset($creds['username'])) {
@@ -94,17 +93,14 @@ class AuthController extends Controller
             'password'
         );
 
-
         $token = JWTAuth::attempt($authData);
         if (!$token) {
-            $errMsg = array_key_exists('username', $authData) ? "invalid username or password" : "invalid email or password";
-            throw ValidationException::withMessages([
-                'invalid_credentials' => $errMsg,
-            ]);
+            $errMsg = array_key_exists('username', $authData) ? 'invalid username or password' : 'invalid email or password';
+            throw ValidationException::withMessages(['invalid_credentials' => $errMsg]);
         }
 
         return $this->successResponse([
-            'token' => $token
+            'token' => $token,
         ]);
     }
 
@@ -112,8 +108,9 @@ class AuthController extends Controller
     {
         // get tokenfrom the current request and invalidate it (by blacklisting)
         JWTAuth::invalidate(JWTAuth::getToken());
+
         return $this->successResponse([
-            'message' => 'successfully logged out'
+            'message' => 'successfully logged out',
         ]);
     }
 
@@ -123,8 +120,9 @@ class AuthController extends Controller
 
         JWTAuth::parseToken();  // parse token and check if it is valid
         $newToken = JWTAuth::refresh();
+
         return $this->successResponse([
-            'token' => $newToken
+            'token' => $newToken,
         ]);
     }
 }

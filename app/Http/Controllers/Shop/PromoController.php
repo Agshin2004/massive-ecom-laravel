@@ -1,12 +1,11 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Shop;
 
+use App\Http\Controllers\Controller;
+use App\Http\Requests\StorePromoRequest;
 use App\Models\Promo;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
-use App\Http\Requests\StorePromoRequest;
-use Illuminate\Validation\ValidationException;
 
 class PromoController extends Controller
 {
@@ -16,8 +15,9 @@ class PromoController extends Controller
     public function index()
     {
         $promos = Promo::all();
+
         return $this->successResponse([
-            'promos' => $promos
+            'promos' => $promos,
         ]);
     }
 
@@ -42,7 +42,7 @@ class PromoController extends Controller
         $promo = Promo::create($request->all());
 
         return $this->successResponse([
-            'promo' => $promo
+            'promo' => $promo,
         ]);
     }
 
@@ -52,7 +52,7 @@ class PromoController extends Controller
     public function show(Promo $promo)
     {
         return $this->successResponse([
-            'promo' => $promo
+            'promo' => $promo,
         ]);
     }
 
@@ -67,8 +67,9 @@ class PromoController extends Controller
 
         // Note: not checking if is_active present since later I will implemented only admins update/create promos
         $promo->update($request->all());
+
         return $this->successResponse([
-            'promo' => $promo
+            'promo' => $promo,
         ]);
     }
 

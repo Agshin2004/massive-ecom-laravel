@@ -1,7 +1,8 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Shop;
 
+use App\Http\Controllers\Controller;
 use App\Models\CartItem;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -14,7 +15,7 @@ class CartController extends Controller
     }
 
     /**
-     * Add product to the cart
+     * Add product to the cart.
      */
     public function store(Request $request)
     {
@@ -39,7 +40,7 @@ class CartController extends Controller
             $cartItem = CartItem::create([
                 'product_id' => $request->input('product_id'),
                 'quantity' => $request->input('quantity'),
-                'cart_id' => $cartId
+                'cart_id' => $cartId,
             ]);
         }
 
@@ -52,24 +53,22 @@ class CartController extends Controller
     public function show(CartItem $cartItem)
     {
         return $this->successResponse([
-            'cart_items' => $cartItem
+            'cart_items' => $cartItem,
         ]);
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, CartItem $cartItem)
-    {
-        //
-    }
+    public function update(Request $request, CartItem $cartItem) {}
 
     /**
-     * Remove cart item
+     * Remove cart item.
      */
     public function destroy(CartItem $cartItem)
     {
         $cartItem->delete();
+
         return $this->noContent();
     }
 }

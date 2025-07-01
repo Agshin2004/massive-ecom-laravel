@@ -1,11 +1,12 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Admin;
 
 use App\Enums\Role;
 use App\Models\User;
 use App\Enums\SellerStatus;
 use Illuminate\Http\Request;
+use App\Http\Controllers\Controller;
 
 class AdminController extends Controller
 {
@@ -16,8 +17,8 @@ class AdminController extends Controller
         }
 
         $userId = $request->input('userId');
-        //* NOTE: could use tryFrom but then we would need to wrap it inside try / catch
-        //* so decided to write static fromValue method on SellerStatus that throws exception if not found
+        // * NOTE: could use tryFrom but then we would need to wrap it inside try / catch
+        // * so decided to write static fromValue method on SellerStatus that throws exception if not found
         $status = SellerStatus::fromValue($request->input('status'))->value;
 
         // $user = User::find($userId) ?: abort(404, 'user not found');
@@ -26,7 +27,6 @@ class AdminController extends Controller
         if ($user->role !== Role::Seller->value) {
             abort(400, 'user is not seller');
         }
-
 
         $user->seller->status = $status;
         $user->seller->save(); // saving seller NOT USER
