@@ -1,5 +1,7 @@
 <?php
 
+use App\Http\Controllers\Seller\SellerController;
+use App\Http\Middleware\SellerMiddleware;
 use Illuminate\Support\Facades\Route;
 use App\Http\Middleware\Auth\NotLoggedIn;
 use App\Http\Controllers\Auth\AuthController;
@@ -49,4 +51,10 @@ Route::middleware(['auth:api', 'throttle:api'])->group(function () {
     Route::prefix('admin')->controller(AdminController::class)->group(function () {
         Route::post('seller-status', 'updateSellerStatus');
     });
+
+    Route::prefix('seller')
+        ->middleware(SellerMiddleware::class)
+        ->controller(SellerController::class)->group(function () {
+            Route::post('order-status', 'updateOrderStatus');
+        });
 });

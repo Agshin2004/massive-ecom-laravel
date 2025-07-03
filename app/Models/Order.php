@@ -11,7 +11,10 @@ class Order extends Model
     public $incrementing = false;
 
     protected $fillable = [
-        'user_id'
+        'user_id',
+        'seller_id',
+        'is_active',
+        'order_status',
     ];
 
     public static function booted()

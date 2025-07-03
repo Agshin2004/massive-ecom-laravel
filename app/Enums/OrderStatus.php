@@ -10,7 +10,7 @@ enum OrderStatus: string
     case CANCELLED_BY_STORE = 'cancelled_by_store';
     case SHIPPED = 'shipped';
     case DELIVERED = 'delivered';
-    case CANCELED_BY_USER = 'canceled_by_user';
+    case CANCELED_BY_USER = 'cancelled_by_user';
 
     public static function values(): array
     {
