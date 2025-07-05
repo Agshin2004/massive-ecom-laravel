@@ -1,34 +1,12 @@
 <?php
 
-use App\Http\Controllers\Seller\SellerController;
-use App\Http\Middleware\SellerMiddleware;
 use Illuminate\Support\Facades\Route;
-use App\Http\Middleware\Auth\NotLoggedIn;
-use App\Http\Controllers\Auth\AuthController;
 use App\Http\Controllers\Shop\CartController;
-use App\Http\Controllers\User\UserController;
 use App\Http\Controllers\Shop\OrderController;
 use App\Http\Controllers\Shop\PromoController;
-use App\Http\Controllers\Admin\AdminController;
 use App\Http\Controllers\Shop\ReviewController;
 use App\Http\Controllers\Shop\ProductController;
 use App\Http\Controllers\Shop\CategoryController;
-
-// Route::get('/user', function (Request $request) {
-//     return $request->user();
-// })->middleware('auth:sanctum');
-
-// * Auth Related Routes
-Route::prefix('auth')
-    ->middleware([NotLoggedIn::class, 'throttle:api'])
-    ->controller(AuthController::class)
-    ->group(function () {
-        Route::post('register-user', 'registerUser');
-        Route::post('register-seller', 'registerSeller');
-        Route::post('login', 'login');
-        Route::post('logout', 'logout');
-        Route::post('refresh', 'refresh');
-    });
 
 Route::middleware(['auth:api', 'throttle:api'])->group(function () {
     Route::apiResource('products', ProductController::class);
@@ -37,24 +15,4 @@ Route::middleware(['auth:api', 'throttle:api'])->group(function () {
     Route::apiResource('reviews', ReviewController::class);
     Route::apiResource('cart-items', CartController::class);
     Route::apiResource('orders', OrderController::class);
-
-    // Route::prefix('order')->group(function () {
-    //     Route::post('place-order', [OrderController::class, 'placeOrder']);
-    // });
-
-    Route::prefix('users')->group(function () {
-        Route::get('reviews', [UserController::class, 'userReviews']);
-        Route::get('reviews/{reviewId}', [UserController::class, 'userReviewById']);
-        Route::get('cart-items', [UserController::class, 'userCartItems']);
-    });
-
-    Route::prefix('admin')->controller(AdminController::class)->group(function () {
-        Route::post('seller-status', 'updateSellerStatus');
-    });
-
-    Route::prefix('seller')
-        ->middleware(SellerMiddleware::class)
-        ->controller(SellerController::class)->group(function () {
-            Route::post('order-status', 'updateOrderStatus');
-        });
 });
