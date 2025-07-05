@@ -16,6 +16,11 @@ return Application::configure(basePath: dirname(__DIR__))
         api: __DIR__ . '/../routes/api.php',
         commands: __DIR__ . '/../routes/console.php',
         health: '/up',
+        then: function (): void {
+            //* auth routes
+            Route::prefix('auth')
+                ->group(base_path('routes/auth.php'));
+        }
     )
     ->withMiddleware(function (Middleware $middleware) {
         //
@@ -31,7 +36,7 @@ return Application::configure(basePath: dirname(__DIR__))
                 return response()->json([
                     'success' => false,
                     'message' => 'Validation Failed',
-                    'errors' => $e->errors()
+                    'errors' => $e->errors(),
                 ], 422);  // could also use 400 bad request code but decided to use 422
             }
 
@@ -40,21 +45,21 @@ return Application::configure(basePath: dirname(__DIR__))
                 return response()->json([
                     'success' => false,
                     'message' => config('app.debug') ? $e->getMessage() : 'Not Found',
-                    'stack' => config('app.debug') ? $e->getTrace() : null
+                    'stack' => config('app.debug') ? $e->getTrace() : null,
                 ], 404);
             }
 
             if ($e instanceof TokenBlacklistedException) {
                 return response()->json([
                     'success' => false,
-                    'message' => 'Token has been blacklisted'
+                    'message' => 'Token has been blacklisted',
                 ], 401);
             }
 
             if ($e instanceof TokenInvalidException || $e instanceof JWTException) {
                 return response()->json([
                     'success' => false,
-                    'message' => "'Invalid or expired token'; {$e->getMessage()}"
+                    'message' => "'Invalid or expired token'; {$e->getMessage()}",
                 ], 401);
             }
 
@@ -62,7 +67,7 @@ return Application::configure(basePath: dirname(__DIR__))
                 return response()->json([
                     'success' => false,
                     'message' => 'DB Error',
-                    'stack' => config('app.debug') ? ($e->getMessage() ?: $e->getTrace()) : null
+                    'stack' => config('app.debug') ? ($e->getMessage() ?: $e->getTrace()) : null,
                 ], 400);
             }
 
@@ -70,7 +75,7 @@ return Application::configure(basePath: dirname(__DIR__))
             return response()->json([
                 'success' => false,
                 'message' => $e->getMessage(),
-                'stack' => config('app.debug') ? $e->getTrace() : null
+                'stack' => config('app.debug') ? $e->getTrace() : null,
             ], $e->getCode() ?: 500);
         });
     })

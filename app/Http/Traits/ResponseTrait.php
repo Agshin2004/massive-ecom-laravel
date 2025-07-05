@@ -10,7 +10,7 @@ trait ResponseTrait
             'message' => $message,
             'code' => $code,
             'payload' => $data,
-        ]);
+        ], $code);
     }
 
     protected function errorResponse($message = 'failed', $code = 400)
@@ -18,7 +18,15 @@ trait ResponseTrait
         return response()->json([
             'message' => $message,
             'code' => $code,
-        ]);
+        ], $code);
+    }
+
+    protected function created($message = 'created', $code = 201)
+    {
+        return response()->json([
+            'message' => $message,
+            'code' => $code,
+        ], $code);
     }
 
     protected function noContent()

@@ -31,7 +31,7 @@ class OrderController extends Controller
 
         $this->repo->createForUser($cartItems->toArray(), $user);
 
-        return $this->noContent();
+        return $this->created();
     }
 
     public function show(Order $order)

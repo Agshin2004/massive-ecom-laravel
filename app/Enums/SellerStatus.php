@@ -19,7 +19,7 @@ enum SellerStatus: string
             self::Pending->value => self::Pending,
             self::Approved->value => self::Approved,
             self::Rejected->value => self::Rejected,
-            default => throw new \InvalidArgumentException("Invalid seller status: {$value}"),
+            default => throw new \InvalidArgumentException("Invalid seller status"),
         };
     }
 }

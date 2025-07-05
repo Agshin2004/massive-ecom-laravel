@@ -11,7 +11,7 @@ interface IUserOwnedRepository
 
     public function findForUser(int|string $id, User $user): ?Model;
 
-    public function createForUser(array $data, User $user): array;
+    public function createForUser(array $data, User $user): object|array;
 
     public function updateForUser(int|string $id, array $data, User $user): bool;
 

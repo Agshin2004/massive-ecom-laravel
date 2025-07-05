@@ -16,7 +16,8 @@ class AdminController extends Controller
             abort(400, 'Unauthorized');
         }
 
-        $userId = $request->input('userId');
+        $userId = $request->input('userId') ?? abort(400, 'userId must be provided');
+
         // * NOTE: could use tryFrom but then we would need to wrap it inside try / catch
         // * so decided to write static fromValue method on SellerStatus that throws exception if not found
         $status = SellerStatus::fromValue($request->input('status'))->value;
