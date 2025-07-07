@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Middleware;
+namespace App\Http\Middleware\Seller;
 
 use App\Enums\SellerStatus;
 use Closure;
@@ -29,8 +29,6 @@ class SellerMiddleware
         if ($request->user()->seller->status !== SellerStatus::Approved->value) {
             throw new AuthorizationException('Seller is not approved by user');
         }
-
-
 
         return $next($request);
     }

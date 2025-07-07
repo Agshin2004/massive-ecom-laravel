@@ -1,6 +1,6 @@
 <?php
 
-use App\Http\Middleware\SellerMiddleware;
+use App\Http\Middleware\Seller\SellerMiddleware;
 use App\Http\Controllers\Seller\SellerController;
 
 Route::middleware(SellerMiddleware::class)
