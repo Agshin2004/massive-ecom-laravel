@@ -3,7 +3,7 @@
 use App\Http\Middleware\Auth\NotLoggedIn;
 use App\Http\Controllers\Auth\AuthController;
 
-Route::middleware([NotLoggedIn::class, 'throttle:api'])
+Route::middleware(['notLoggedIn', 'throttle:api'])
     ->controller(AuthController::class)
     ->group(function () {
         Route::post('register-user', 'registerUser');

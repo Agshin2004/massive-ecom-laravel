@@ -1,14 +1,18 @@
 <?php
 
+use Illuminate\Http\Request;
+use App\Exceptions\ForbiddenException;
+use App\Http\Middleware\Admin\isAdmin;
+use Illuminate\Foundation\Application;
+use App\Exceptions\UnauthorizedException;
+use App\Http\Middleware\Auth\NotLoggedIn;
+use Illuminate\Validation\ValidationException;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
-use Illuminate\Foundation\Application;
-use Illuminate\Http\Request;
-use Illuminate\Validation\ValidationException;
 use PHPOpenSourceSaver\JWTAuth\Exceptions\JWTException;
-use PHPOpenSourceSaver\JWTAuth\Exceptions\TokenBlacklistedException;
 use PHPOpenSourceSaver\JWTAuth\Exceptions\TokenInvalidException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
+use PHPOpenSourceSaver\JWTAuth\Exceptions\TokenBlacklistedException;
 
 return Application::configure(basePath: dirname(__DIR__))
     ->withRouting(
@@ -17,25 +21,31 @@ return Application::configure(basePath: dirname(__DIR__))
         commands: __DIR__ . '/../routes/console.php',
         health: '/up',
         then: function (): void {
-            //* auth routes
-            Route::prefix('auth')
-                ->group(base_path('routes/auth.php'));
+            Route::prefix('api')
+                ->group(function () {
+                    //* auth routes
+                    Route::prefix('auth')
+                        ->group(base_path('routes/auth.php'));
 
-            //* users routes
-            Route::prefix('users')
-                ->group(base_path('routes/seller.php'));
+                    //* users routes
+                    Route::prefix('users')
+                        ->group(base_path('routes/seller.php'));
 
-            //* seller routes
-            Route::prefix('seller')
-                ->group(base_path('routes/users.php'));
+                    //* seller routes
+                    Route::prefix('seller')
+                        ->group(base_path('routes/users.php'));
 
-            //* admin routes
-            Route::prefix('admin')
-                ->group(base_path('routes/admin.php'));
+                    //* admin routes
+                    Route::prefix('admin')
+                        ->group(base_path('routes/admin.php'));
+                });
         }
     )
     ->withMiddleware(function (Middleware $middleware) {
-        //
+        $middleware->alias([
+            'isAdmin' => isAdmin::class,
+            'notLoggedIn' => NotLoggedIn::class,
+        ]);
     })
     ->withExceptions(function (Exceptions $exceptions) {
         $exceptions->renderable(function (Throwable $e, Request $request) {
@@ -81,6 +91,22 @@ return Application::configure(basePath: dirname(__DIR__))
                     'message' => 'DB Error',
                     'stack' => config('app.debug') ? ($e->getMessage() ?: $e->getTrace()) : null,
                 ], 400);
+            }
+
+            if ($e instanceof UnauthorizedException) {
+                return response()->json([
+                    'success' => false,
+                    'message' => $e->getMessage(),
+                    'stack' => config('app.debug') ? ($e->getMessage() ?: $e->getTrace()) : null,
+                ], $e->getCode());
+            }
+
+            if ($e instanceof ForbiddenException) {
+                return response()->json([
+                    'success' => false,
+                    'message' => $e->getMessage(),
+                    'stack' => config('app.debug') ? ($e->getMessage() ?: $e->getTrace()) : null,
+                ], $e->getCode());
             }
 
             // handle unhanled errors

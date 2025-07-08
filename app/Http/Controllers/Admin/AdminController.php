@@ -12,10 +12,6 @@ class AdminController extends Controller
 {
     public function updateSellerStatus(Request $request)
     {
-        if (!$request->user()->isAdmin()) {
-            abort(400, 'Unauthorized');
-        }
-
         $userId = $request->input('userId') ?? abort(400, 'userId must be provided');
 
         // * NOTE: could use tryFrom but then we would need to wrap it inside try / catch

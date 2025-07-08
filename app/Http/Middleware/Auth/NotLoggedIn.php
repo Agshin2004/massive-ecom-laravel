@@ -2,6 +2,7 @@
 
 namespace App\Http\Middleware\Auth;
 
+use App\Exceptions\UnauthorizedException;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -15,7 +16,7 @@ class NotLoggedIn
     public function handle(Request $request, \Closure $next): Response
     {
         if ($request->header('authorization')) {
-            throw new \Exception('Unauthorized', 401);
+            throw new UnauthorizedException();
         }
 
         return $next($request);
