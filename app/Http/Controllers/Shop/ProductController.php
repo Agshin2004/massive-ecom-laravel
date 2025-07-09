@@ -5,16 +5,17 @@ namespace App\Http\Controllers\Shop;
 use App\Http\Controllers\Controller;
 use App\Models\Product;
 use App\Repositories\ProductRepo;
+use App\Services\ProductService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Gate;
 
 class ProductController extends Controller
 {
-    public function __construct(private ProductRepo $repo) {}
+    // public function __construct(private ProductService $productService) {}
 
     public function index(Request $request)
     {
-        $products = $this->repo->getAllForUser($request->user());
+        $products = ProductService::make()->allProducts();
 
         return $this->successResponse($products);
     }
@@ -26,7 +27,7 @@ class ProductController extends Controller
     {
         Gate::authorize('create', Product::class);
 
-        $request->validate([
+        $validated = $request->validate([
             'name' => ['required', 'min:3', 'max:120'],
             'description' => ['required'],
             'price' => ['required', 'numeric'],  // must be *.**
@@ -34,21 +35,8 @@ class ProductController extends Controller
             'seller_id' => ['required', 'exists:App\Models\Seller,id'],
         ]);
 
-        if (auth()->user()->seller && $request->input('seller_id') != auth()->user()->seller->id) {
-            return $this->errorResponse('You can only create products for your own seller account');
-        }
-
-        sellerHasProduct($request->input('name'), $request->input('price'));
-
-        $productData = [
-            'name' => $request->input('name'),
-            'description' => $request->input('description'),
-            'price' => $request->input('price'),
-            'category_id' => $request->input('category_id'),
-            'seller_id' => $request->input('seller_id'),
-        ];
-
-        $product = $this->repo->createForUser($productData, $request->user());
+        $product = ProductService::make($validated['seller_id'], $validated['category_id'])
+            ->createProduct($validated, auth()->user());
 
         return $this->successResponse(['product' => $product]);
     }

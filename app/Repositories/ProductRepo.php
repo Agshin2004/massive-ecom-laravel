@@ -17,7 +17,7 @@ class ProductRepo implements IUserOwnedRepository
         return Product::where('id', $id)->where('user_id', $user->id)->first();
     }
 
-    public function createForUser(array $data, User $user): Product
+    public function createForUser(array $data, ?User $user): Product
     {
         // if ($user->isAdmin()) {
         //     return Product::create($data);

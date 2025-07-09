@@ -2,7 +2,9 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Http\Controllers\Shop\ProductController;
 use App\Models\Product;
+use App\Services\ProductService;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 
@@ -16,11 +18,11 @@ class AdminProductsController extends Controller
         $request->validate([
             'limit' => ['sometimes', 'min:1', 'max:100', 'integer'],
         ]);
+
         $limit = $request->input('limit') ?? 10;
+        $search = $request->input('search') ?? null;
 
-        $products = Product::paginate($limit);
-
-        return $products;
+        return ProductService::make()->allProducts($search, $limit);
     }
 
     /**

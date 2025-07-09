@@ -17,7 +17,9 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 class User extends Authenticatable implements JWTSubject
 {
     /** @use HasFactory<\Database\Factories\UserFactory> */
-    use HasFactory, Notifiable, SoftDeletes;
+    use HasFactory;
+    use Notifiable;
+    use SoftDeletes;
 
     /**
      * The attributes that are mass assignable.
@@ -101,5 +103,10 @@ class User extends Authenticatable implements JWTSubject
     public function isAdmin(): bool
     {
         return $this->role === Role::Admin->value;
+    }
+
+    public function isSeller()
+    {
+        return $this->role === Role::Seller->value;
     }
 }
