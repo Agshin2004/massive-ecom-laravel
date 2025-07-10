@@ -2,12 +2,15 @@
 
 namespace App\Services;
 
+use App\Exceptions\NotImplementedException;
 use App\Models\User;
 use App\Models\Product;
 use App\Repositories\ProductRepo;
 use App\Exceptions\ForbiddenException;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Pagination\LengthAwarePaginator;
+
+use function PHPUnit\Framework\never;
 
 class ProductService
 {
@@ -25,7 +28,7 @@ class ProductService
         ]);
     }
 
-    public function allProducts(string $search = null, int $limit = null): LengthAwarePaginator
+    public function paginate(string $search = null, int $limit = null): LengthAwarePaginator
     {
         $user = auth()->user();
         $query = null;
@@ -49,7 +52,12 @@ class ProductService
         return $query->paginate($limit ?? 10);
     }
 
-    public function createProduct(array $data, User $user): Product
+    public function findById(string $productId): Product
+    {
+        return Product::findOrFail($productId);
+    }
+
+    public function create(array $data, User $user): Product
     {
         if (! $user->isSeller() && ! $user->isAdmin()) {
             throw new ForbiddenException();
@@ -66,6 +74,16 @@ class ProductService
         ];
 
         return $this->productRepo->createForUser($productData, $user);
+    }
+
+    public function update()
+    {
+        throw new NotImplementedException();
+    }
+
+    public function destroy(Product $product)
+    {
+        throw new NotImplementedException();
     }
 
 }

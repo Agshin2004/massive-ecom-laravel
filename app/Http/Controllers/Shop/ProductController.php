@@ -15,7 +15,7 @@ class ProductController extends Controller
 
     public function index(Request $request)
     {
-        $products = ProductService::make()->allProducts();
+        $products = ProductService::make()->paginate();
 
         return $this->successResponse($products);
     }
@@ -35,10 +35,10 @@ class ProductController extends Controller
             'seller_id' => ['required', 'exists:App\Models\Seller,id'],
         ]);
 
-        $product = ProductService::make($validated['seller_id'], $validated['category_id'])
-            ->createProduct($validated, auth()->user());
+        ProductService::make($validated['seller_id'], $validated['category_id'])
+            ->create($validated, auth()->user());
 
-        return $this->successResponse(['product' => $product]);
+        return $this->created();
     }
 
     /**

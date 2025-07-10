@@ -22,7 +22,7 @@ class AdminProductsController extends Controller
         $limit = $request->input('limit') ?? 10;
         $search = $request->input('search') ?? null;
 
-        return ProductService::make()->allProducts($search, $limit);
+        return ProductService::make()->paginate($search, $limit);
     }
 
     /**
@@ -38,7 +38,7 @@ class AdminProductsController extends Controller
      */
     public function show(string $id)
     {
-        //
+        return ProductService::make()->findById($id);
     }
 
     /**
