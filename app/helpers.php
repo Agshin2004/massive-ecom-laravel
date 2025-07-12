@@ -1,7 +1,6 @@
 <?php
 
 use App\Models\Product;
-use Illuminate\Database\Eloquent\Model;
 
 function sellerHasProduct($productName, $productPrice)
 {
