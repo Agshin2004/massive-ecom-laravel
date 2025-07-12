@@ -2,31 +2,16 @@
 
 namespace App\Services;
 
-use App\Exceptions\NotImplementedException;
 use App\Models\User;
 use App\Models\Product;
 use App\Repositories\ProductRepo;
-use App\Exceptions\ForbiddenException;
-use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Pagination\LengthAwarePaginator;
-
-use function PHPUnit\Framework\never;
 
 class ProductService
 {
     public function __construct(
         private ProductRepo $productRepo,
-        private string|null $sellerId, // will be validated before calling this service
-        private string|null $categoryId, // will be validated before calling this service
     ) {}
-
-    public static function make(string $sellerId = null, ?string $categoryId = null): self
-    {
-        return app()->make(self::class, [
-            'sellerId' => $sellerId,
-            'categoryId' => $categoryId,
-        ]);
-    }
 
     public function paginate(string $search = null, int $limit = null): LengthAwarePaginator
     {
@@ -59,9 +44,10 @@ class ProductService
 
     public function create(array $data, User $user): Product
     {
-        if (! $user->isSeller() && ! $user->isAdmin()) {
-            throw new ForbiddenException();
-        }
+        // no need to have validation here since validation must be in controllers
+        // if (! $user->isSeller() && ! $user->isAdmin()) {
+        //     throw new ForbiddenException();
+        // }
 
         sellerHasProduct($data['name'], $data['price']);
 
@@ -69,21 +55,23 @@ class ProductService
             'name' => $data['name'],
             'description' => $data['description'],
             'price' => $data['price'],
-            'category_id' => $this->categoryId,
-            'seller_id' => $this->sellerId,
+            'category_id' => $data['category_id'],
+            'seller_id' => $data['sellerId'],
         ];
 
         return $this->productRepo->createForUser($productData, $user);
     }
 
-    public function update()
+    public function update(Product $product, array $data): Product
     {
-        throw new NotImplementedException();
+        $product->update($data);
+
+        return $product;
     }
 
-    public function destroy(Product $product)
+    public function destroy(string $productId)
     {
-        throw new NotImplementedException();
+        return Product::findOrFail($productId)->delete();
     }
 
 }

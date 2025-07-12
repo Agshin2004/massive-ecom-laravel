@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Shop;
 
+use App\Exceptions\ForbiddenException;
 use App\Http\Controllers\Controller;
 use App\Models\Product;
 use App\Repositories\ProductRepo;
@@ -11,11 +12,11 @@ use Illuminate\Support\Facades\Gate;
 
 class ProductController extends Controller
 {
-    // public function __construct(private ProductService $productService) {}
+    public function __construct(private ProductService $productService) {}
 
     public function index(Request $request)
     {
-        $products = ProductService::make()->paginate();
+        $products = $this->productService->paginate();
 
         return $this->successResponse($products);
     }
@@ -35,8 +36,7 @@ class ProductController extends Controller
             'seller_id' => ['required', 'exists:App\Models\Seller,id'],
         ]);
 
-        ProductService::make($validated['seller_id'], $validated['category_id'])
-            ->create($validated, auth()->user());
+        $this->productService->create($validated, auth()->user());
 
         return $this->created();
     }
@@ -60,27 +60,22 @@ class ProductController extends Controller
             return $this->errorResponse('At least one column needs to be changed');
         }
 
-        $request->validate([
+        $validated = $request->validate([
             'name' => ['min:3', 'max:120'],
             'price' => ['numeric'],
             'category_id' => ['exists:App\Models\Category,id'],
             'seller_id' => ['prohibited'],
         ]);
 
-        $validated = $request->only([
-            'name',
-            'description',
-            'price',
-            'category_id',
-        ]);
-
         // checking some additional fields were passed
         if (count($validated) !== count($request->all())) {
-            abort(400, 'Unexpected fields are in request!');
+            throw new ForbiddenException('Unexpected fields are in request!');
         }
 
-        // didn't use repo since it is already looked up by laravel
-        $product->update($request->all());
+        $this->productService->update($product, $validated);
+
+        // didn't use repo since it is already looked up by laravel and no need to query again
+        // $product->update($request->all());
 
         return $this->successResponse($product);
     }

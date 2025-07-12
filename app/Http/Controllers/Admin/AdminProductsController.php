@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Exceptions\ForbiddenException;
 use App\Http\Controllers\Shop\ProductController;
 use App\Models\Product;
 use App\Services\ProductService;
@@ -10,6 +11,10 @@ use App\Http\Controllers\Controller;
 
 class AdminProductsController extends Controller
 {
+    public function __construct(
+        private ProductService $productService
+    ) {}
+
     /**
      * Display a listing of the resource.
      */
@@ -22,7 +27,7 @@ class AdminProductsController extends Controller
         $limit = $request->input('limit') ?? 10;
         $search = $request->input('search') ?? null;
 
-        return ProductService::make()->paginate($search, $limit);
+        return $this->productService->paginate($search, $limit);
     }
 
     /**
@@ -30,7 +35,15 @@ class AdminProductsController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $validated = $request->validate([
+            'name' => ['required', 'min:3', 'max:120'],
+            'description' => ['required'],
+            'price' => ['required', 'numeric'],  // must be *.**
+            'category_id' => ['required', 'exists:App\Models\Category,id'],
+            'seller_id' => ['required', 'exists:App\Models\Seller,id'],
+        ]);
+
+        $this->productService->create($validated, auth()->user());
     }
 
     /**
@@ -38,7 +51,8 @@ class AdminProductsController extends Controller
      */
     public function show(string $id)
     {
-        return ProductService::make()->findById($id);
+        $product = $this->productService->findById($id);
+        return $this->successResponse(['product' => $product]);
     }
 
     /**
@@ -46,7 +60,22 @@ class AdminProductsController extends Controller
      */
     public function update(Request $request, string $id)
     {
-        //
+        // NOTE: didn't use Gate here since this controller already makes use of isAdmin middleware to check if user is amdin
+
+        $validated = $request->validate([
+            'name' => ['min:3', 'max:120'],
+            'price' => ['numeric'],
+            'category_id' => ['exists:App\Models\Category,id'],
+            'seller_id' => ['prohibited'],
+        ]);
+
+        if (count($validated) !== count($request->all())) {
+            throw new ForbiddenException('Unexpected fields are in request!');
+        }
+
+        $product = $this->productService->update(Product::findOrFail($id), $validated);
+
+        return $this->successResponse(['product' => $product]);
     }
 
     /**
@@ -54,6 +83,7 @@ class AdminProductsController extends Controller
      */
     public function destroy(string $id)
     {
-        //
+        $this->productService->destroy($id);
+        return $this->noContent();
     }
 }
