@@ -2,13 +2,14 @@
 
 namespace App\Http\Controllers\Shop;
 
-use App\Exceptions\ForbiddenException;
-use App\Http\Controllers\Controller;
 use App\Models\Product;
-use App\Repositories\ProductRepo;
-use App\Services\ProductService;
+use App\DTOs\ProductDTO;
 use Illuminate\Http\Request;
+use App\Services\ProductService;
+use App\Repositories\ProductRepo;
+use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Gate;
+use App\Exceptions\ForbiddenException;
 
 class ProductController extends Controller
 {
@@ -36,7 +37,15 @@ class ProductController extends Controller
             'seller_id' => ['required', 'exists:App\Models\Seller,id'],
         ]);
 
-        $this->productService->create($validated, auth()->user());
+        $dto = new ProductDTO(
+            name: $validated['name'],
+            description: $validated['description'],
+            price: $validated['price'],
+            categoryId: $validated['category_id'],
+            sellerId: $validated['seller_id']
+        );
+
+        $this->productService->create($dto, auth()->user());
 
         return $this->created();
     }

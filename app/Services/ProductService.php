@@ -4,6 +4,7 @@ namespace App\Services;
 
 use App\Models\User;
 use App\Models\Product;
+use App\DTOs\ProductDTO;
 use App\Repositories\ProductRepo;
 use Illuminate\Pagination\LengthAwarePaginator;
 
@@ -42,21 +43,21 @@ class ProductService
         return Product::findOrFail($productId);
     }
 
-    public function create(array $data, User $user): Product
+    public function create(ProductDTO $dto, User $user): Product
     {
         // no need to have validation here since validation must be in controllers
         // if (! $user->isSeller() && ! $user->isAdmin()) {
         //     throw new ForbiddenException();
         // }
 
-        sellerHasProduct($data['name'], $data['price']);
+        sellerHasProduct($dto->name, $dto->price);
 
         $productData = [
-            'name' => $data['name'],
-            'description' => $data['description'],
-            'price' => $data['price'],
-            'category_id' => $data['category_id'],
-            'seller_id' => $data['sellerId'],
+            'name' => $dto->name,
+            'description' => $dto->description,
+            'price' => $dto->price,
+            'category_id' => $dto->categoryId,
+            'seller_id' => $dto->sellerId,
         ];
 
         return $this->productRepo->createForUser($productData, $user);

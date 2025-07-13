@@ -4,7 +4,7 @@ namespace App\Repositories;
 
 interface IRepository
 {
-    public function getAll(): iterable;
+    public function getAll(?int $limit): iterable;
 
     public function getById(int|string $id): ?object;
 
