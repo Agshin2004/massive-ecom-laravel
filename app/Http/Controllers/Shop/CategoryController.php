@@ -26,11 +26,11 @@ class CategoryController extends Controller
      */
     public function store(Request $request)
     {
+        Gate::authorize('create', Category::class);
+
         $request->validate([
             'name' => ['required', 'unique:App\Models\Category,name'],
         ]);
-
-        Gate::authorize('create', Category::class);
 
         // if (Gate::denies('is-admin')) {
         //     throw new \Exception('Unauthorized', 400);
@@ -59,11 +59,11 @@ class CategoryController extends Controller
      */
     public function update(Request $request, Category $category)
     {
+        Gate::authorize('update', Category::class);
+
         $request->validate([
             'name' => ['required', 'unique:App\Models\Category,name'],
         ]);
-
-        Gate::authorize('update', Category::class);
 
         $category->update([
             'name' => $request->input('name'),

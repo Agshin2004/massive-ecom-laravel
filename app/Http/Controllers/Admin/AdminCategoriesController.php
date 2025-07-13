@@ -2,9 +2,11 @@
 
 namespace App\Http\Controllers\Admin;
 
-use App\Http\Controllers\Controller;
-use App\Repositories\CategoryRepo;
+use App\Models\Category;
+use App\DTOs\CategoryDTO;
 use Illuminate\Http\Request;
+use App\Repositories\CategoryRepo;
+use App\Http\Controllers\Controller;
 
 class AdminCategoriesController extends Controller
 {
@@ -33,7 +35,17 @@ class AdminCategoriesController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $request->validate([
+            'name' => ['required', 'unique:App\Models\Category,name'],
+        ]);
+
+        $name = $request->input('name');
+
+        $dto = new CategoryDTO(
+            name: $name
+        );
+
+        $this->repo->create($dto->toArray());
     }
 
     /**
@@ -50,7 +62,21 @@ class AdminCategoriesController extends Controller
      */
     public function update(Request $request, string $id)
     {
-        //
+        $request->validate([
+            'name' => ['required', 'unique:App\Models\Category,name'],
+        ]);
+        $name = $request->input('name');
+
+        $dto = new CategoryDTO(
+            name: $name,
+        );
+
+        $category = Category::findOrFail($id);
+        $updateCategory = tap($category, function () use ($category, $dto) {
+            $category->update($dto->toArray());
+        });
+
+        return $this->successResponse(['category' => $updateCategory]);
     }
 
     /**
