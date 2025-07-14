@@ -11,7 +11,7 @@ use App\Http\Controllers\Shop\CategoryController;
 Route::middleware(['auth:api', 'throttle:api'])->group(function () {
     Route::apiResource('products', ProductController::class);
     Route::apiResource('categories', CategoryController::class);
-    Route::apiResource('promos', PromoController::class);
+    Route::apiResource('promos', PromoController::class)->middleware('isAdmin');
     Route::apiResource('reviews', ReviewController::class);
     Route::apiResource('cart-items', CartController::class);
     Route::apiResource('orders', OrderController::class);
