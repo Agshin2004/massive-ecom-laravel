@@ -16,6 +16,10 @@ class isAdmin
      */
     public function handle(Request $request, Closure $next): Response
     {
+        if (!$request->user()) {
+            throw new UnauthorizedException('Not logged in');
+        }
+
         if ($request->user()->isAdmin()) {
             return $next($request);
         }

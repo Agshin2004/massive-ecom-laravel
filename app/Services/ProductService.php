@@ -2,13 +2,12 @@
 
 namespace App\Services;
 
-use App\Models\User;
 use App\Models\Product;
-use App\DTOs\ProductDTO;
 use App\Repositories\ProductRepo;
+use App\Services\Contracts\IService;
 use Illuminate\Pagination\LengthAwarePaginator;
 
-class ProductService
+class ProductService implements IService
 {
     public function __construct(
         private ProductRepo $productRepo,
@@ -38,12 +37,12 @@ class ProductService
         return $query->paginate($limit ?? 10);
     }
 
-    public function findById(string $productId): Product
+    public function findById(string|int $productId): Product
     {
         return Product::findOrFail($productId);
     }
 
-    public function create(ProductDTO $dto, User $user): Product
+    public function create(mixed $dto, mixed $user): mixed
     {
         // no need to have validation here since validation must be in controllers
         // if (! $user->isSeller() && ! $user->isAdmin()) {
@@ -63,14 +62,14 @@ class ProductService
         return $this->productRepo->createForUser($productData, $user);
     }
 
-    public function update(Product $product, array $data): Product
+    public function update(mixed $product, array $data): mixed
     {
         $product->update($data);
 
         return $product;
     }
 
-    public function destroy(string $productId)
+    public function destroy(string|int $productId): bool
     {
         return Product::findOrFail($productId)->delete();
     }

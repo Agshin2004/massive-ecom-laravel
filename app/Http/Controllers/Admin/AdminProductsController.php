@@ -28,7 +28,10 @@ class AdminProductsController extends Controller
         $limit = $request->input('limit') ?? 10;
         $search = $request->input('search') ?? null;
 
-        return $this->productService->paginate($search, $limit);
+        $paginatedProducts = $this->productService->paginate($search, $limit);
+        return $this->successResponse([
+            'products' => $paginatedProducts,
+        ]);
     }
 
     /**
@@ -53,6 +56,8 @@ class AdminProductsController extends Controller
         );
 
         $this->productService->create($dto, auth()->user());
+
+        return $this->created();
     }
 
     /**
@@ -61,6 +66,7 @@ class AdminProductsController extends Controller
     public function show(string $id)
     {
         $product = $this->productService->findById($id);
+
         return $this->successResponse(['product' => $product]);
     }
 
